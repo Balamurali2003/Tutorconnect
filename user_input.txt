@@ -1,0 +1,510 @@
+<USER_REQUEST>
+id	created_time	ad_id	ad_name	adset_id	adset_name	campaign_id	campaign_name	form_id	form_name	is_organic	platform	are_you_comfortable_providing_home_tuition?	which_subjects_can_you_teach?	how_much_teaching_experience_do_you_have?	full_name	phone_number	email
+l:1722127015759792	2026-08-29T09:34:00+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	fb	yes	tamil	5 years	Muthu lakshmi	p:+919942323234	mukanraji@gmail.com
+l:928927793596778	2026-08-29T08:15:47+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics	1-2 years	Ishak jas	p:+919751533400	ishakjas@gmail.com
+l:2501995363648765	2026-08-29T07:17:55+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics	3-5 years	Aenok Raja A	p:8056516304	dhytert@gmail.com
+l:997697179990043	2026-08-29T06:49:39+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	fb	yes	History	4 years	Ashikilahi	p:+919655030391	ashikilahi401@gmail.com
+l:916588211507071	2026-08-29T06:45:22+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Other	1-2 years	R. abinaya	p:7904550799	aabinayaramar12@gmail.com
+l:1114645927551913	2026-08-29T06:27:37+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Class 9 to 12 physics	6 years in CBSE	Amirtha Ranjith	p:+918489920301	amirtharanjith98@gmail.com
+l:1758136561887434	2026-08-29T05:35:54+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	fb	yes	maths	no	Balamurugan	p:+919597841951	bala.palani207@gmail.com
+l:1821723728998569	2026-08-29T01:28:53+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Economics Business studies	6	Aswanth Maruthoremmal	p:9847450672	aswanthmrpba@gmail.com
+l:1129596822934262	2026-08-29T01:18:32+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	fb	yes	All	15	Arun Sudarmani	p:+919003456548	arunsudarmani@gmail.com
+l:1101640412803065	2026-08-29T00:35:41+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	English	None	Dafydd Jehonathan Fernando	p:+918124412731	sjdjf2004@gmail.com
+l:2912650372448698	2026-08-28T23:53:56+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Maths	5	Raffeek Jasim M	p:+919677303236	jasimraffeek@gmail.com
+l:1047447124859826	2026-08-28T23:36:26+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	All Primary Subjects	< 1 year	نور السيبانا	p:+919488352040	noorul99517@gmail.com
+l:2502563433568696	2026-08-28T23:15:01+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Science	1-2 years	Syedali Fathima	p:+918056920624	sithickabubacker@gmail.com
+l:1364473718999647	2026-08-28T22:43:15+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Other Law related	Fresher	Ammu Alias Vaishnavi devi	p:+919080303355	advvaishnavi4897@gmail.com
+l:2952651361740159	2026-08-28T22:31:33+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	All subjects	Already experience in home tutition..in my home itself not now	aarohi	p:+918637604590	rohinipooja31@gmail.com
+l:2512533879173843	2026-08-28T22:26:20+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Accountancy commerce	13 years	Ganesh	p:+918667448171	tharunikaroja06@gmail.com
+l:1839030417466298	2026-08-28T21:57:43+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	English tamil maths Computer Science	fresher seeking for an opportunity	Ancy Raj	p:+918667358470	ancyraj7606@gmail.com
+l:1735756577673309	2026-08-28T21:57:12+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	All subjects	5+ years	Vincy Catherine	p:+919361649326	catherinearun11@gmail.com
+l:865623753167472	2026-08-28T21:21:26+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Maths, Tamil	Nothing as am a fresher	IDHREES	p:7603860588	idhreesajimulla5000@gmail.com
+l:2215882109264034	2026-08-28T21:11:23+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	English	1-2 years	Porkodi	p:+919159114897	porkodielangovan97@gmail.com
+l:2147045619492364	2026-08-28T21:00:58+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	fb	yes	English, Tamil, History, Science, Social Science	5years	Muthusamy A	p:+919566868277	rifayaamuthu@gmail.com
+l:1084941473988582	2026-08-28T20:57:53+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Computer science, tamil,maths,	6+	Rosyfathima	p:+918883387943	rosyfathima40@gmail.com
+l:2221519482078040	2026-08-28T20:53:17+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Science	< 1 year	Lingasamy M	p:+917094396004	lingasamy1003@gmail.com
+l:1321935053134950	2026-08-28T20:13:57+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil Mathematics	< 1 year	S.Saritha queen	p:+919597858312	sarithas30102002@gmail.com
+l:1432244992105088	2026-08-28T20:13:30+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics	< 1 year	Katheeja	p:6374736690	shakabafa@gmail.com
+l:4582791552041641	2026-08-28T19:53:44+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil English Computer science	None	Suthaveni kumar	p:+919361179927	suthavenikumar@gmail.com
+l:1108184901854709	2026-08-28T19:44:13+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Accounts, economics, commerce	2 years	Salha fathima rihana	p:+919344262978	ssfathi2020@gmail.com
+l:1975726453094670	2026-08-28T18:54:42+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Computer science, Maths	1year	Rajashree	p:+918903683094	rajirajashree3105@gmail.com
+l:1589132479408211	2026-08-28T18:16:28+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics all elementary level subjects	3-5 years	Eswaramoorthy	p:+917010189406	tcheswar@gmail.com
+l:1084356390766775	2026-08-28T17:48:51+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	All subjects	5+ years	selvisankar	p:+917010996758	selvi26061990@gmail.com
+l:1056056830498388	2026-08-28T17:48:37+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	English	1-2 years	Bhagavathikarthick	p:+919597916611	nandhu20kumar@gmail.com
+l:1376945217286899	2026-08-28T17:46:07+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Maths English	3	Bharathi	p:+917598400396	bharathinagaraj811@gmail.com
+l:1075945655363343	2026-08-28T16:34:41+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	All Primary Subjects	None	Shivu	p:+917418632202	shivu220402@gmail.com
+l:1048801261290994	2026-08-28T16:20:55+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	fb	yes	Mathematics	2yrs..	Veeralakshmi G	p:+916383378385	visalymani6158@gmail.com
+l:1836943864353006	2026-08-28T16:12:14+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics	3-5 years	Sivaranjani A	p:+918438751621	ranjanianand230201@gmail.com
+l:1031982626505554	2026-08-28T16:11:55+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics	1-2 years	S.Amutha	p:+917418272542	amuthas2668@gmail.com
+l:4176649752471597	2026-08-28T16:03:15+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil, Science, Social	< 1 year	Beena Murugan	p:+919944037670	beenavmurugan@gmail.com
+l:1271860319345954	2026-08-28T15:39:42+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	no	Tamil	None	Meenakshi	p:+91934504218	meenusudalaimuthu@gmail.com
+l:1362085562676035	2026-08-27T20:42:25+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics	8 years	saravanaraj	p:7339420430	saravanasanthiya1725@gmail.com
+l:1721892829021395	2026-08-27T17:18:34+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics, physics, chemistry	One year	Mahendran P	p:+919791855106	mahijey3643@gmail.com
+l:828095316991287	2026-08-27T16:59:41+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Hindi	20 years	K Sindhu	p:+918680979462	purijegannathbaldevsubathra@gmail.com
+l:1386642926160958	2026-08-27T16:43:35+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	fb	yes	English & Science	13	K Seyed Abuthakir	p:+919084587114	seyedabutha@gmail.com
+l:948748184171106	2026-08-27T16:19:25+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil, Arabic,Hindi, English	2 years experience	Fathima Sumaiya	p:+917397385388	fathimasumaiya2301@gmail.com
+l:1246047264304090	2026-08-27T15:51:24+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	English tamil social	5	Mom aspirant	p:+916385923922	raji.948755@gmail.com
+l:1377242453906166	2026-08-27T14:46:46+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Maths	3years	Asha_kani	p:+919952327357	ashakani22@gmail.com
+l:956773337450856	2026-08-27T14:32:31+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Science and tamil	5 years	Jaliya Abbas	p:+917010558366	jaliyaabbas09@gmail.com
+l:1535178401269186	2026-08-27T14:19:11+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil, english	8 months at success academy	Santhiya	p:+918248138106	babyq1364@gmail.com
+l:1525208026046051	2026-08-27T14:00:14+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	fb	yes	physics and science	5 years	Evelin Jeya Christa	p:+918220841575	jeyav8622@gmail.com
+l:1777607210041310	2026-08-27T13:49:06+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Maths	One year experience in CBSE school and have 5 year experience in home tuition	Arokia	p:+919442846276	arokiainnasi@gmail.com
+l:1394722812024909	2026-08-27T13:39:31+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics and science	5years	Saravana Babu	p:+919003777624	usaravanababu@gmail.com
+l:2107289426660997	2026-08-27T13:30:35+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Biology, Social,English, Tamil, Maths (3- 6)	4 years	Mownigamowni	p:+916369311326	mownigasakthi114614@gmail.com
+l:2059785477993928	2026-08-27T13:28:50+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	English ,science,computer science	No experience	Geetha Malika	p:+918754140324	geethamalika2607@gmail.com
+l:1087365253704194	2026-08-27T13:06:04+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	English and maths	2 years	Anu Varsha	p:+919600783905	bikeisalife201099@gmail.com
+l:948390467531749	2026-08-27T13:00:13+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Computer science	11 years	Giftson	p:9025217016	k.giftsonit@gmail.com
+l:2172190086732160	2026-08-27T12:35:23+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil maths	No	Vinitha Pradeep	p:+918778314599	arulvini70@gmail.com
+l:39196715273260912	2026-08-27T12:11:57+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	I have experience teaching courses such as Tally Prime, SAP FICO, SAP MM, Excel, and MS Office in schools, colleges, and training institutes. I have also worked as a trainer in various institutes and have good hands-on teaching experience in these courses.	7 years	jannath	p:+918778610732	jannathjaanu1106@gmail.com
+l:955762007540812	2026-08-27T12:04:58+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Chemistry science and maths Science maths chemistry	17 years	Ruby Basker	p:+919500328102	rubybasker76@gmail.com
+l:1608574184301795	2026-08-27T11:55:38+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Social science, polity, law subjects	No	Karpagavalli D	p:+916379757833	karpagamdurai02@gmail.com
+l:2501621680306708	2026-08-27T11:51:50+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	All subjects	Taking hometition since 2019 to still now .Almost 7 to 6 years experience..	Suga Brindha.R	p:8870452212	sugabrindhar@gmail.com
+l:2917538245264974	2026-08-27T11:46:58+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Hindi	4	Rk	p:+919786661562	karthigarajeshkumar@gmail.com
+l:1417715136925475	2026-08-27T11:43:50+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Accountancy and commerce	6	Michael	p:+919750514410	avemariamichael7@gmail.com
+l:1805435050817749	2026-08-27T10:33:49+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Maths	1year	Vinitha	p:+919787121328	vinithasiva120@gmail.com
+l:27985393554493564	2026-08-27T09:04:43+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil maths science and social science	1-2 years	Stephi Jebaraj	p:+919600613090	stephistephi.t@gmail.com
+l:1396289009265902	2026-08-27T08:10:55+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	no	Mathematics	16 years	Vijaya Narayanan	p:+917904814471	vijayanarayanananmath@gmail.com
+l:1408630751376885	2026-08-27T08:09:37+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	All Primary Subjects	< 1 year	Nirmala	p:+919344133279	nirmalaganesh2012@gmail.com
+l:2923236621360187	2026-08-27T07:45:53+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil	“I am a fresher. I have completed D.El.Ed and I am pursuing B.A Tamil. I have teaching interest and I can handle primary classes	SKJJ Mehandhi	p:+917598985653	joriya2021@gmail.com
+l:1377745257186916	2026-08-27T06:37:37+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Any subject	Five years	premashree	p:+918098594851	premsuresh2505@gmail.com
+l:2151327112119356	2026-08-27T05:57:45+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	I'm a experienced tutor. I can teach State board metric and CBSE	4	Sri	p:+919489193590	srianusiya.r@gmail.com
+l:2246975792824913	2026-08-27T05:35:31+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Mathematics	7 years	Selva Muppidathi	p:+919360770870	selvipappa11697@gmail.com
+l:3027010097669685	2026-08-27T02:39:26+05:30	ag:120252188002030556	New Leads ad	as:120252188002050556	TEACHERS WANTED	c:120252188002040556	TEACHERS WANTED	f:3809007749261806	Charithra Learning Hub – Tirunelveli-copy	FALSE	ig	yes	Tamil and English	4	Prakash	p:+916379454210	prakashnselvi@gmail.com                                                                                                                                                   id	created_time	ad_id	ad_name	adset_id	adset_name	campaign_id	campaign_name	form_id	form_name	is_organic	platform	உங்கள்_பிள்ளை_எந்த_வகுப்பில்_படிக்கிறார்?	full_name	phone_number	email		
+l:1096911329679079	2026-08-27T14:04:37+05:30	ag:120252171684690556	Tution	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	7	Saradha.N	p:+917904890501	saradha.nagarajan@gmail.com		
+l:1368663862054077	2026-08-27T00:00:30+05:30	ag:120252171684690556	Tution	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	8	Regina Kather	p:+919150368292	kemansha@gmail.com		
+l:2531296727298598	2026-08-26T23:05:20+05:30	ag:120252171684690556	Tution	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	8	subbulakshmi	p:+919698939000	gayusalthi1604@gmail.com		
+l:1780108663119312	2026-08-26T22:42:17+05:30	ag:120252171684690556	Tution	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	10	mahes wari	p:+917395832148	maheswari031291@gmail.com		
+l:1592356112348816	2026-08-26T21:45:48+05:30	ag:120252171684690556	Tution	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	1	Mariappan	p:+919791627500	arunsaiamlu87@gmail.com		
+l:1391963322887693	2026-08-26T20:33:07+05:30	ag:120252171684690556	Tution	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	4 st	Pushpa	p:+919025343078	pushpamaha@gmail.com		
+l:981026291614682	2026-08-26T12:56:39+05:30	ag:120252171684690556	Tution	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	Seetha ram V std	thangaraj kutti	p:+916380812126	kanikutti1589@gmail.com		
+l:2062801804378163	2026-08-26T05:12:46+05:30	ag:120252171684690556	Tution	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	6	Vadivukarasi Arasi	p:+919940948419	vadivukarasi8@gmail.com		
+l:2120409172193782	2026-08-28T23:18:11+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	6 - 8 வகுப்பு	Devi Kumari	p:+919489931636	devi20008@gmail.com		
+l:2464001324094971	2026-08-28T22:52:50+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	1 - 5 வகுப்பு	MADHAN	p:+918825711189	anus65174@gmail.com		
+l:1056136467188665	2026-08-28T21:44:11+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	1 - 5 வகுப்பு	Asiya	p:+917358881381	asiyahussain135@gmail.com		
+l:1422599006599029	2026-08-28T19:42:05+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	9 - 10 வகுப்பு	s.s.esakki	p:+917094858234	eskkiesakki669@gmail.com		
+l:1268796895337981	2026-08-28T19:28:31+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	1 - 5 வகுப்பு	vaishu	p:+919952337847	vaishubala26317@gmail.com		
+l:1744809779975233	2026-08-28T18:07:53+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	11 th standard	Ramakrishnan	p:+919682615055	ramkiraj1982@gmail.com		
+l:4519994441604571	2026-08-28T18:02:39+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	second standard	MARUTHU PANDIAN	p:+919791985477	karthikvaniveni27@gmail.com		
+l:2571947123235120	2026-08-28T16:33:37+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	9 - 10 வகுப்பு	Aaqi	p:+919003941250	meeraaaa2025@gmail.com		
+l:1050118870956274	2026-08-27T08:56:33+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	12th	Girija Ramakrishnan	p:+916369927121	rosanrohit1978@gmail.com		
+l:1047431558044309	2026-08-27T08:03:20+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	11	Kavitha Gomathi shankar	p:+919600384353	blackhole-marbxvdiolt2gwyfcscpusjgsc6yc1baqx2feh7j25a_s-1589701108@devnull.facebook.com		
+l:1582966140131532	2026-08-27T07:44:03+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	9 - 10 வகுப்பு	Maha	p:+916374285691	ssrimaha325@gmail.com		
+l:1383186913321213	2026-08-27T04:04:06+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	1 - 5 வகுப்பு	Naziya	p:+918220679160	oncity.c@gmail.com		
+l:1062217766735106	2026-08-27T01:22:46+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	1st stanted	surya	p:+919952323608	thanijaya8091@gmail.com		
+l:3470404893123092	2026-08-26T23:01:35+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	12th	Ameena Parvin No	p:+918489122317	ameenaparveen1988@gmail.com		
+l:960475267062701	2026-08-26T21:48:10+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	10th	madhu__sanjay1725	p:9715033302	murugankkms@gmail.com		
+l:2625569081291661	2026-08-26T20:20:42+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	4th	Uma Maheswari	p:+919566907278	uma_maheswari1091@yahoo.com		
+l:1982839499075432	2026-08-26T18:38:18+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	5th Class work	Ammu Mathi	p:+916380361981	ammuindumathi773@gmail.com		
+l:1692283031858281	2026-08-26T18:18:57+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	1 - 5 வகுப்பு	joo poorni	p:8610774146	baseswa11@gmail.com		
+l:3634785980030420	2026-08-26T15:30:32+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	fb	4,6,7	Sakthi Pawnu	p:+919524032992	satheeswaripawnu@gmail.com		
+l:2349877452532974	2026-08-26T07:19:59+05:30	ag:120252171791330556	Tution – Copy	as:120252171684700556	Tution	c:120252171684680556	Tution	f:1049889701166919	Charithra Learning Hub – Tirunelveli	FALSE	ig	7th	Selvi	p:9442988963	24be29@sxcedn.edu.in		                                                                        UPDATE MY EXISTING TUITION CENTRE APPLICATION DATA.
+
+IMPORTANT:
+DO NOT CHANGE OR REDESIGN THE EXISTING UI, PAGES, WORKFLOW, OR FEATURES.
+
+ONLY REPLACE THE CURRENT DUMMY / SAMPLE DATA WITH MY ACTUAL:
+
+1. TEACHERS DATA
+2. STUDENTS DATA
+
+The existing application workflow must remain unchanged.
+
+====================================================
+REMOVE SAMPLE DATA
+====================================================
+
+Remove all current dummy/sample:
+
+- Tutors
+- Teachers
+- Students
+- Parents
+- Recruitment records created only for demonstration
+
+The application should use my actual uploaded Teachers and Students data.
+
+====================================================
+TEACHERS DATA
+====================================================
+
+Import all valid records from my Teachers data.
+
+Map the existing Teacher/Tutor fields correctly.
+
+Use:
+
+Full Name
+→ Tutor Name
+
+Phone Number
+→ Mobile Number
+
+Email
+→ Email
+
+Which Subjects Can You Teach
+→ Subjects
+
+How Much Teaching Experience Do You Have
+→ Experience
+
+Are You Comfortable Providing Home Tuition
+→ Home Tuition Available
+
+Platform
+→ Lead Source / Platform
+
+Created Time
+→ Application Date
+
+Campaign Name
+→ Campaign Name
+
+Lead ID / ID
+→ External Lead ID
+
+Preserve all original data.
+
+Do not generate fake names, fake phone numbers, fake qualifications, or fake salaries.
+
+====================================================
+MISSING TEACHER DETAILS
+====================================================
+
+Some recruitment fields may not exist in my Teachers data.
+
+For fields not available in the spreadsheet:
+
+Qualification
+Location
+Available Timing
+Expected Salary
+Documents
+Interview Result
+Demo Class Result
+
+Set the value to:
+
+"Not Provided"
+
+Admin should be able to edit and update these details later.
+
+====================================================
+TEACHER INITIAL STATUS
+====================================================
+
+For newly imported Teachers:
+
+Priority = NOT_ASSIGNED
+
+Status = NEW_APPLICATION
+
+Do not automatically make every teacher High Priority or Low Priority.
+
+Admin must manually assign:
+
+HIGH PRIORITY
+
+or
+
+LOW PRIORITY
+
+After priority assignment, the teacher must appear in the correct priority page.
+
+====================================================
+STUDENTS DATA
+====================================================
+
+Import all valid records from my Students data.
+
+Map:
+
+Full Name
+→ Student Name
+
+Phone Number
+→ Parent / Contact Mobile
+
+Email
+→ Parent / Contact Email
+
+Student Class
+→ Class
+
+Platform
+→ Lead Source
+
+Created Time
+→ Lead Created Date
+
+Campaign Name
+→ Campaign Name
+
+Lead ID / ID
+→ External Lead ID
+
+Preserve the actual student data.
+
+Do not generate fake:
+
+School
+Location
+Required Subjects
+Preferred Timing
+Budget
+
+For unavailable information, display:
+
+"Not Provided"
+
+Admin can update these details later.
+
+====================================================
+PARENT MANAGEMENT
+====================================================
+
+The student spreadsheet may contain the contact phone number and email.
+
+Use these as:
+
+Parent Contact Number
+
+Parent Email
+
+Do not invent fake Parent Names.
+
+Initially:
+
+Parent Name = Not Provided
+
+Admin can later:
+
+- Add Parent Name
+- Edit Parent Details
+- Link Parent to Student
+
+====================================================
+DUPLICATE PREVENTION
+====================================================
+
+Before importing Teachers:
+
+Check:
+
+- External Lead ID
+- Phone Number
+- Email
+
+Before importing Students:
+
+Check:
+
+- External Lead ID
+- Phone Number
+- Email
+
+Do not create duplicate records.
+
+Show import results:
+
+Total Records
+
+Successfully Imported
+
+Skipped Duplicates
+
+Invalid Records
+
+====================================================
+KEEP EXISTING WORKFLOW
+====================================================
+
+The existing tutor recruitment workflow must continue to work:
+
+NEW APPLICATION
+
+↓
+
+ASSIGN PRIORITY
+
+↓
+
+HIGH PRIORITY / LOW PRIORITY
+
+↓
+
+VALIDATE
+
+↓
+
+DOCUMENT VERIFICATION
+
+↓
+
+INTERVIEW
+
+↓
+
+DEMO CLASS
+
+↓
+
+STUDENT FEEDBACK
+
+↓
+
+PARENT APPROVAL
+
+↓
+
+TUTOR APPOINTED
+
+Do not break any existing workflow.
+
+====================================================
+IMPORTANT INTERVIEW FIX
+====================================================
+
+The Interview → Demo Class workflow must continue working.
+
+When Interview Result = SELECTED:
+
+1. Save interview evaluation.
+2. Update tutor status.
+3. Create or update Demo Class record.
+4. Tutor must automatically appear on Demo Class page.
+5. Refresh Demo Class list.
+
+====================================================
+DASHBOARD DATA
+====================================================
+
+Update all Dashboard statistics using actual imported database records.
+
+Do not use hardcoded numbers.
+
+Calculate dynamically:
+
+- Total Teachers
+- Total Students
+- High Priority
+- Low Priority
+- Not Assigned
+- New Applications
+- Document Verification Pending
+- Interview Pending
+- Demo Classes Pending
+- Appointed Teachers
+
+====================================================
+TEACHER TABLE
+====================================================
+
+Show real Teachers data.
+
+Columns:
+
+- Tutor ID
+- Full Name
+- Mobile Number
+- Email
+- Subjects
+- Experience
+- Home Tuition Available
+- Platform
+- Priority
+- Status
+- Actions
+
+====================================================
+STUDENT TABLE
+====================================================
+
+Show real Students data.
+
+Columns:
+
+- Student ID
+- Student Name
+- Class
+- Parent Contact Number
+- Parent Email
+- Platform
+- Created Date
+- Status
+- Actions
+
+====================================================
+SEARCH AND FILTER
+====================================================
+
+Teacher search:
+
+- Name
+- Phone Number
+- Email
+- Subject
+
+Teacher filters:
+
+- Priority
+- Status
+- Subject
+- Experience
+- Platform
+- Home Tuition Availability
+
+Student search:
+
+- Student Name
+- Phone Number
+- Email
+
+Student filters:
+
+- Class
+- Platform
+
+====================================================
+DATABASE
+====================================================
+
+Ensure imported data is saved permanently in the database.
+
+Do not store imported data only in frontend local state.
+
+After:
+
+- Page refresh
+- Browser refresh
+- Logout and login
+
+The Teachers and Students data must still exist.
+
+====================================================
+FINAL REQUIREMENT
+====================================================
+
+Use my actual Teachers and Students spreadsheet data throughout the Tuition Centre application.
+
+Replace dummy data with real imported records.
+
+Do not redesign the application.
+
+Keep all existing pages and workflows.
+
+Ensure:
+
+Teachers → Tutor Recruitment Workflow
+
+Students → Tutor Matching and Demo Class
+
+Parent contact details → Parent Approval
+
+All dashboard counts and tables must use real database data.
+
+Test the complete application after importing the real data.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-09-02T14:45:50+05:30.
+</ADDITIONAL_METADATA>
