@@ -26,6 +26,11 @@ import { WhatsAppSettingsPage } from './pages/WhatsAppSettingsPage';
 import { WhatsAppWebhookLogsPage } from './pages/WhatsAppWebhookLogsPage';
 import { WhatsAppApiLogsPage } from './pages/WhatsAppApiLogsPage';
 import { WhatsAppTestPage } from './pages/WhatsAppTestPage';
+import { MetaWhatsAppConnectPage } from './pages/MetaWhatsAppConnectPage';
+import { WhatsAppBulkMessagingPage } from './pages/WhatsAppBulkMessagingPage';
+import { StudyMaterialsPage } from './pages/StudyMaterialsPage';
+import { StudentCommunicationPage } from './pages/StudentCommunicationPage';
+import { TeacherCommunicationPage } from './pages/TeacherCommunicationPage';
 import { Tutor } from './types';
 
 export const App: React.FC = () => {
@@ -48,7 +53,16 @@ export const App: React.FC = () => {
 
     switch (activeTab) {
       case 'dashboard':
-        return <DashboardPage />;
+        return <DashboardPage initialView="overview" />;
+
+      case 'dashboard-students':
+        return <DashboardPage initialView="students" />;
+
+      case 'dashboard-teachers':
+        return <DashboardPage initialView="teachers" />;
+
+      case 'study-materials':
+        return <StudyMaterialsPage />;
 
       case 'all-tutors':
         return <AllTutorsPage onSelectTutor={handleSelectTutor} />;
@@ -101,6 +115,12 @@ export const App: React.FC = () => {
       case 'appointed-tutors':
         return <AppointedTutorsPage onSelectTutor={handleSelectTutor} />;
 
+      case 'communication-students':
+        return <StudentCommunicationPage />;
+
+      case 'communication-teachers':
+        return <TeacherCommunicationPage />;
+
       case 'communication-all':
         return <SocialLeadsInboxPage initialSource="ALL" />;
 
@@ -113,17 +133,20 @@ export const App: React.FC = () => {
       case 'communication-instagram':
         return <SocialLeadsInboxPage initialSource="INSTAGRAM" />;
 
+      case 'whatsapp-connect':
       case 'whatsapp':
-        return <WhatsAppDashboardPage />;
+      case 'whatsapp-settings':
+        return <MetaWhatsAppConnectPage />;
+
+      case 'whatsapp-bulk':
+      case 'whatsapp-messaging':
+        return <WhatsAppBulkMessagingPage />;
 
       case 'whatsapp-inbox':
         return <WhatsAppInboxPage />;
 
       case 'whatsapp-contacts':
         return <WhatsAppContactsPage />;
-
-      case 'whatsapp-settings':
-        return <WhatsAppSettingsPage />;
 
       case 'whatsapp-webhook-logs':
         return <WhatsAppWebhookLogsPage />;
@@ -134,11 +157,8 @@ export const App: React.FC = () => {
       case 'whatsapp-test':
         return <WhatsAppTestPage />;
 
-      case 'whatsapp-messaging':
-        return <WhatsAppMessagingPage />;
-
       case 'whatsapp-templates':
-        return <WhatsAppTemplatesPage onUseTemplate={() => setActiveTab('whatsapp-messaging')} />;
+        return <WhatsAppTemplatesPage onUseTemplate={() => setActiveTab('whatsapp-bulk')} />;
 
       case 'whatsapp-history':
         return <WhatsAppHistoryPage />;

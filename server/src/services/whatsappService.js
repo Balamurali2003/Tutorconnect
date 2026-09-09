@@ -12,14 +12,14 @@ class WhatsAppService {
     this.refreshConfig();
   }
 
-  refreshConfig() {
-    this.accessToken = process.env.WHATSAPP_ACCESS_TOKEN || '';
-    this.phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || '109283746501928';
-    this.businessAccountId = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || '192837465019283';
-    this.verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || process.env.META_VERIFY_TOKEN || 'tutorconnect_meta_verify_token_2026';
-    this.appSecret = process.env.WHATSAPP_APP_SECRET || process.env.META_APP_SECRET || 'meta_app_secret_placeholder_tutorconnect';
-    this.apiVersion = process.env.WHATSAPP_API_VERSION || 'v20.0';
-    this.webhookUrl = process.env.WHATSAPP_WEBHOOK_URL || 'http://localhost:5001/api/webhooks/whatsapp';
+  refreshConfig(customConfig = {}) {
+    this.accessToken = customConfig.accessToken || process.env.WHATSAPP_ACCESS_TOKEN || '';
+    this.phoneNumberId = customConfig.phoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID || '109283746501928';
+    this.businessAccountId = customConfig.businessAccountId || process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || '192837465019283';
+    this.verifyToken = customConfig.verifyToken || process.env.WHATSAPP_VERIFY_TOKEN || process.env.META_VERIFY_TOKEN || 'tutorconnect_meta_verify_token_2026';
+    this.appSecret = customConfig.appSecret || process.env.WHATSAPP_APP_SECRET || process.env.META_APP_SECRET || 'meta_app_secret_placeholder_tutorconnect';
+    this.apiVersion = customConfig.apiVersion || process.env.WHATSAPP_API_VERSION || 'v20.0';
+    this.webhookUrl = customConfig.webhookUrl || process.env.WHATSAPP_WEBHOOK_URL || 'http://localhost:5001/api/webhooks/whatsapp';
     this.apiBaseUrl = `https://graph.facebook.com/${this.apiVersion}`;
   }
 
@@ -102,22 +102,27 @@ class WhatsAppService {
     const validReport = this.validateWhatsAppNumber(rawPhone);
     const formattedPhone = validReport.valid ? validReport.formatted : rawPhone;
 
+    const clientName = tutor.fullName || tutor.studentName || tutor.parentName || extra.name || 'Client';
     const vars = {
-      '{{tutor_name}}': tutor.fullName || 'Tutor',
+      '{{name}}': clientName,
+      '{{client_name}}': clientName,
+      '{{tutor_name}}': tutor.fullName || clientName,
+      '{{student_name}}': extra.student_name || tutor.studentName || clientName,
+      '{{parent_name}}': extra.parent_name || tutor.parentName || clientName,
+      '{{class}}': extra.class || tutor.class || 'Student Class',
       '{{phone_number}}': formattedPhone,
       '{{subjects}}': subjectsStr,
       '{{experience}}': tutor.experience || `${tutor.experienceYears || 1} years`,
-      '{{location}}': tutor.preferredLocation || 'Centre / Residence',
+      '{{location}}': tutor.preferredLocation || tutor.location || tutor.address || 'Centre / Residence',
       '{{priority}}': (tutor.priority || 'NOT_ASSIGNED').replace(/_/g, ' '),
       '{{status}}': (tutor.status || 'NEW_APPLICATION').replace(/_/g, ' '),
-      '{{availableTiming}}': tutor.availableTiming || '5:00 PM - 7:00 PM',
+      '{{availableTiming}}': tutor.availableTiming || tutor.preferredTiming || '5:00 PM - 7:00 PM',
       '{{interview_date}}': extra.interview_date || extra.date || '08 Sep 2026',
       '{{interview_time}}': extra.interview_time || extra.time || '10:00 AM',
       '{{demo_date}}': extra.demo_date || extra.date || '10 Sep 2026',
       '{{demo_time}}': extra.demo_time || extra.time || '05:00 PM',
-      '{{student_name}}': extra.student_name || 'Standard 10 Student',
-      '{{subject}}': extra.subject || (Array.isArray(tutor.subjects) && tutor.subjects[0]) || 'Mathematics',
-      '{{centre_name}}': 'TutorConnect Tuition Centre',
+      '{{subject}}': extra.subject || (Array.isArray(tutor.subjects) && tutor.subjects[0]) || (Array.isArray(tutor.requiredSubjects) && tutor.requiredSubjects[0]) || 'Mathematics',
+      '{{centre_name}}': 'CHARITHRA Educational Platform',
       '{{salary}}': extra.salary || (tutor.expectedSalary ? `₹${tutor.expectedSalary.toLocaleString()}` : '₹12,000')
     };
 

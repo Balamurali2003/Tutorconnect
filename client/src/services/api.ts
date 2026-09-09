@@ -27,7 +27,10 @@ import {
   WhatsAppSettingsConfig,
   WhatsAppWebhookLog,
   WhatsAppApiLog,
-  TutorWhatsAppDetailResponse
+  TutorWhatsAppDetailResponse,
+  StudyMaterial,
+  StudentsAnalytics,
+  TeachersAnalytics
 } from '../types';
 
 const API_BASE = '/api';
@@ -538,7 +541,21 @@ export async function sendWhatsAppMessage(data: {
 }
 
 export async function bulkSendWhatsAppMessages(data: {
-  tutorIds: string[];
+  tutorIds?: string[];
+  clientIds?: string[];
+  studentIds?: string[];
+  parentIds?: string[];
+  recipients?: Array<{
+    id?: string;
+    name?: string;
+    fullName?: string;
+    phone?: string;
+    type?: string;
+    role?: string;
+    whatsappOptIn?: WhatsAppOptIn;
+    class?: string;
+    location?: string;
+  }>;
   message?: string;
   messageTemplate?: string;
   templateId?: string;
@@ -554,6 +571,25 @@ export async function bulkSendWhatsAppMessages(data: {
     const err = await res.json().catch(() => ({ error: 'Failed to send bulk WhatsApp messages' }));
     throw new Error(err.error || 'Failed to send bulk WhatsApp messages');
   }
+  return res.json();
+}
+
+export async function fetchAllClients(): Promise<{
+  success: boolean;
+  clients: Array<{
+    id: string;
+    clientId: string;
+    name: string;
+    role: 'Student' | 'Parent' | 'Tutor';
+    phone: string;
+    details: string;
+    location: string;
+    whatsappOptIn: WhatsAppOptIn;
+  }>;
+  total: number;
+}> {
+  const res = await fetch(`${API_BASE}/whatsapp/all-clients`);
+  if (!res.ok) throw new Error('Failed to fetch clients list');
   return res.json();
 }
 
@@ -758,6 +794,7 @@ export async function testWhatsAppConnection(): Promise<{
   success: boolean;
   status: string;
   message: string;
+  meta?: any;
 }> {
   const res = await fetch(`${API_BASE}/whatsapp/test-connection`, {
     method: 'POST'
@@ -826,3 +863,76 @@ export async function fetchTutorWhatsAppDetails(tutorId: string): Promise<TutorW
   if (!res.ok) throw new Error('Failed to fetch tutor WhatsApp details');
   return res.json();
 }
+
+// -------------------------------------------------------------
+// Study Materials Module API Client (Class 1 to 12)
+// -------------------------------------------------------------
+export async function fetchStudyMaterials(params?: Record<string, string>): Promise<{
+  success: boolean;
+  materials: StudyMaterial[];
+  total: number;
+}> {
+  const query = params ? '?' + new URLSearchParams(params).toString() : '';
+  const res = await fetch(`${API_BASE}/study-materials${query}`);
+  if (!res.ok) throw new Error('Failed to fetch study materials');
+  return res.json();
+}
+
+export async function createStudyMaterial(data: Partial<StudyMaterial>): Promise<{
+  success: boolean;
+  material: StudyMaterial;
+}> {
+  const res = await fetch(`${API_BASE}/study-materials`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed to create study material' }));
+    throw new Error(err.error || 'Failed to create study material');
+  }
+  return res.json();
+}
+
+export async function updateStudyMaterial(id: string, data: Partial<StudyMaterial>): Promise<{
+  success: boolean;
+  material: StudyMaterial;
+}> {
+  const res = await fetch(`${API_BASE}/study-materials/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed to update study material' }));
+    throw new Error(err.error || 'Failed to update study material');
+  }
+  return res.json();
+}
+
+export async function deleteStudyMaterial(id: string): Promise<{
+  success: boolean;
+  message: string;
+}> {
+  const res = await fetch(`${API_BASE}/study-materials/${id}`, {
+    method: 'DELETE'
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed to delete study material' }));
+    throw new Error(err.error || 'Failed to delete study material');
+  }
+  return res.json();
+}
+
+export async function fetchStudentsAnalytics(): Promise<StudentsAnalytics> {
+  const res = await fetch(`${API_BASE}/dashboard/students-analytics`);
+  if (!res.ok) throw new Error('Failed to fetch students analytics');
+  return res.json();
+}
+
+export async function fetchTeachersAnalytics(): Promise<TeachersAnalytics> {
+  const res = await fetch(`${API_BASE}/dashboard/teachers-analytics`);
+  if (!res.ok) throw new Error('Failed to fetch teachers analytics');
+  return res.json();
+}
+

@@ -276,6 +276,331 @@ function normalizeDatabase(data) {
     ];
   }
 
+  if (!Array.isArray(data.studyMaterials) || data.studyMaterials.length === 0) {
+    data.studyMaterials = [
+      {
+        id: "mat-1",
+        materialId: "MAT-2026-001",
+        title: "Class 1: English Alphabet, Phonics & Story Worksheets",
+        classGrade: "Class 1",
+        subject: "English",
+        category: "Worksheet",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "2.4 MB",
+        fileFormat: "PDF",
+        description: "Foundational reading, writing, and phonics worksheet with colorful illustrations for Grade 1 children.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-01T08:00:00.000Z",
+        downloadsCount: 142,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-2",
+        materialId: "MAT-2026-002",
+        title: "Class 1: Numbers, Addition & Shape Identification",
+        classGrade: "Class 1",
+        subject: "Mathematics",
+        category: "Worksheet",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "1.8 MB",
+        fileFormat: "PDF",
+        description: "Counting 1 to 100, single digit addition and geometry identification practice.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-01T08:30:00.000Z",
+        downloadsCount: 98,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-3",
+        materialId: "MAT-2026-003",
+        title: "Class 2: My Family, Living Things & Nature Explorer",
+        classGrade: "Class 2",
+        subject: "Environmental Science",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "3.1 MB",
+        fileFormat: "PDF",
+        description: "EVS illustrated notes covering plants, domestic animals, and human body senses.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-02T09:00:00.000Z",
+        downloadsCount: 76,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-4",
+        materialId: "MAT-2026-004",
+        title: "Class 3: Multiplication & Division Speed Drills",
+        classGrade: "Class 3",
+        subject: "Mathematics",
+        category: "Worksheet",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "2.1 MB",
+        fileFormat: "PDF",
+        description: "Times tables 2 through 12 speed exercises, word problems, and mental math practice.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-02T10:15:00.000Z",
+        downloadsCount: 115,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-5",
+        materialId: "MAT-2026-005",
+        title: "Class 4: States of India, Maps & Heritage Handbook",
+        classGrade: "Class 4",
+        subject: "Social Science",
+        category: "Textbook",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "4.5 MB",
+        fileFormat: "PDF",
+        description: "Comprehensive geography, climate zones, and Indian cultural monuments guide.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-03T11:00:00.000Z",
+        downloadsCount: 89,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-6",
+        materialId: "MAT-2026-006",
+        title: "Class 5: Fractions, Decimals & Percentages Master Guide",
+        classGrade: "Class 5",
+        subject: "Mathematics",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "3.6 MB",
+        fileFormat: "PDF",
+        description: "Clear step-by-step visual methods to simplify fractions, conversions, and word problems.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-03T14:30:00.000Z",
+        downloadsCount: 210,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-7",
+        materialId: "MAT-2026-007",
+        title: "Class 6: Introduction to Algebra & Equations Workbook",
+        classGrade: "Class 6",
+        subject: "Mathematics",
+        category: "Worksheet",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "2.8 MB",
+        fileFormat: "PDF",
+        description: "Variables, expressions, linear equations and integer number line problems.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-04T08:45:00.000Z",
+        downloadsCount: 165,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-8",
+        materialId: "MAT-2026-008",
+        title: "Class 6: Motion, Measurement of Distances & Light",
+        classGrade: "Class 6",
+        subject: "Science",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "3.2 MB",
+        fileFormat: "PDF",
+        description: "Standard units, rectilinear motion, shadow formations, and pinhole camera experiments.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-04T09:30:00.000Z",
+        downloadsCount: 134,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-9",
+        materialId: "MAT-2026-009",
+        title: "Class 7: Acids, Bases & Salts Laboratory Handbook",
+        classGrade: "Class 7",
+        subject: "Science",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "2.9 MB",
+        fileFormat: "PDF",
+        description: "Natural indicators (litmus, turmeric), neutralization reactions and real-life examples.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-05T10:00:00.000Z",
+        downloadsCount: 178,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-10",
+        materialId: "MAT-2026-010",
+        title: "Class 8: Rational Numbers & Linear Equations Practice Bank",
+        classGrade: "Class 8",
+        subject: "Mathematics",
+        category: "Question Paper",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "3.7 MB",
+        fileFormat: "PDF",
+        description: "100+ graded problems from NCERT, Exemplar, and previous school exams with answers.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-05T11:20:00.000Z",
+        downloadsCount: 220,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-11",
+        materialId: "MAT-2026-011",
+        title: "Class 8: Cell Structure, Functions & Microorganisms",
+        classGrade: "Class 8",
+        subject: "Science",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "4.1 MB",
+        fileFormat: "PDF",
+        description: "Plant vs Animal cell diagrams, organelles, prokaryotic and eukaryotic distinctions.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-05T12:00:00.000Z",
+        downloadsCount: 195,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-12",
+        materialId: "MAT-2026-012",
+        title: "Class 9: Force, Laws of Motion & Gravitation Numerical Guide",
+        classGrade: "Class 9",
+        subject: "Physics",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "4.8 MB",
+        fileFormat: "PDF",
+        description: "Detailed derivations of Newton's laws, conservation of momentum, and 50 solved numericals.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-06T09:00:00.000Z",
+        downloadsCount: 310,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-13",
+        materialId: "MAT-2026-013",
+        title: "Class 9: Structure of Atom & Chemical Bonding",
+        classGrade: "Class 9",
+        subject: "Chemistry",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "3.5 MB",
+        fileFormat: "PDF",
+        description: "Bohr atomic model, electronic configurations, valency rules, and isotope applications.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-06T10:30:00.000Z",
+        downloadsCount: 265,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-14",
+        materialId: "MAT-2026-014",
+        title: "Class 10: 10-Year Solved Board Papers & Blueprint",
+        classGrade: "Class 10",
+        subject: "Mathematics",
+        category: "Question Paper",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "8.2 MB",
+        fileFormat: "PDF",
+        description: "Complete chapterwise solved board questions for Real Numbers, Polynomials, Trigonometry, and Circles.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-06T14:00:00.000Z",
+        downloadsCount: 540,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-15",
+        materialId: "MAT-2026-015",
+        title: "Class 10: Complete Science Formula & Reactions Handbook",
+        classGrade: "Class 10",
+        subject: "Science",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "5.4 MB",
+        fileFormat: "PDF",
+        description: "All chemical equations, ray diagrams for spherical mirrors, and biology life process flowcharts.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-06T15:30:00.000Z",
+        downloadsCount: 480,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-16",
+        materialId: "MAT-2026-016",
+        title: "Class 11: Kinematics, Work, Energy & Power Concept Notes",
+        classGrade: "Class 11",
+        subject: "Physics",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "6.7 MB",
+        fileFormat: "PDF",
+        description: "Vector calculus approach, projectile motion trajectories, and work-energy theorem proofs.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-07T08:30:00.000Z",
+        downloadsCount: 390,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-17",
+        materialId: "MAT-2026-017",
+        title: "Class 11: Organic Chemistry Basic Principles & Nomenclature",
+        classGrade: "Class 11",
+        subject: "Chemistry",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "5.1 MB",
+        fileFormat: "PDF",
+        description: "IUPAC naming guidelines, resonance effects, hyperconjugation, and electrophilic reactions.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-07T10:00:00.000Z",
+        downloadsCount: 345,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-18",
+        materialId: "MAT-2026-018",
+        title: "Class 12: Electrostatics & Current Electricity Board Prep",
+        classGrade: "Class 12",
+        subject: "Physics",
+        category: "Question Paper",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "7.9 MB",
+        fileFormat: "PDF",
+        description: "Gauss's law derivations, Kirchhoff's circuit problems, and previous board exam 5-mark questions.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-07T14:00:00.000Z",
+        downloadsCount: 620,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-19",
+        materialId: "MAT-2026-019",
+        title: "Class 12: Calculus (Differentiation & Integration) Formula Sheet",
+        classGrade: "Class 12",
+        subject: "Mathematics",
+        category: "Notes",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "4.2 MB",
+        fileFormat: "PDF",
+        description: "Complete standard integrals, substitution techniques, definite integral properties and shortcuts.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-07T16:00:00.000Z",
+        downloadsCount: 710,
+        status: "ACTIVE"
+      },
+      {
+        id: "mat-20",
+        materialId: "MAT-2026-020",
+        title: "Class 12: Python Data Structures, Stacks & SQL Practice Bank",
+        classGrade: "Class 12",
+        subject: "Computer Science",
+        category: "Question Paper",
+        fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        fileSize: "3.8 MB",
+        fileFormat: "PDF",
+        description: "Python file handling (text, binary, CSV), linear stacks, and complex MySQL queries with solutions.",
+        uploadedBy: "Admin",
+        uploadDate: "2026-09-08T09:30:00.000Z",
+        downloadsCount: 430,
+        status: "ACTIVE"
+      }
+    ];
+  }
+
   if (Array.isArray(data.tutors)) {
     data.tutors.forEach(t => {
       t.priority = sanitizePriority(t.priority);
@@ -327,6 +652,10 @@ function saveDB(data) {
 }
 
 let db = normalizeDatabase(loadDB());
+
+if (db.whatsAppConfig) {
+  whatsappService.refreshConfig(db.whatsAppConfig);
+}
 
 if (!db.priorityConfig) {
   db.priorityConfig = { ...priorityEngine.DEFAULT_WEIGHTS };
@@ -3089,12 +3418,21 @@ app.post('/api/whatsapp/template', async (req, res) => {
   });
 });
 
-// 7. Bulk send WhatsApp messages via official WhatsApp Business API
+// 7. Bulk send WhatsApp messages to clients via official WhatsApp Business API
 app.post('/api/whatsapp/bulk-send', async (req, res) => {
-  const { tutorIds, message, messageTemplate, templateName, templateId, languageCode = 'en', extra = {} } = req.body;
-  if (!Array.isArray(tutorIds) || tutorIds.length === 0) {
-    return res.status(400).json({ error: 'No tutors selected' });
-  }
+  const {
+    tutorIds,
+    clientIds,
+    studentIds,
+    parentIds,
+    recipients,
+    message,
+    messageTemplate,
+    templateName,
+    templateId,
+    languageCode = 'en',
+    extra = {}
+  } = req.body;
 
   // Find template content if templateName provided
   let templateText = message || messageTemplate || '';
@@ -3107,13 +3445,91 @@ app.post('/api/whatsapp/bulk-send', async (req, res) => {
     return res.status(400).json({ error: 'Message content or template name is required' });
   }
 
-  // Must process ALL selected tutors individually
-  const selectedTutors = (db.tutors || []).filter(t => tutorIds.includes(t.id));
+  // Build target recipient list
+  let selectedRecipients = [];
+
+  // Case A: explicit recipients list passed from frontend
+  if (Array.isArray(recipients) && recipients.length > 0) {
+    selectedRecipients = recipients.map(r => ({
+      id: r.id || 'rec-' + Math.random(),
+      fullName: r.name || r.fullName || r.studentName || r.parentName || 'Client',
+      studentName: r.studentName || r.name,
+      parentName: r.parentName || r.name,
+      whatsappPhoneNumber: r.phone || r.whatsappPhoneNumber || r.parentPhone || r.mobile || '',
+      mobile: r.phone || r.mobile || r.parentPhone || '',
+      phone: r.phone || r.mobile || '',
+      type: r.type || r.role || 'Client',
+      class: r.class || '',
+      subjects: r.subjects || [],
+      location: r.location || '',
+      whatsappOptIn: r.whatsappOptIn || 'YES'
+    }));
+  } else {
+    // Case B: IDs passed (tutorIds, studentIds, parentIds, or general clientIds)
+    const allTutorIds = Array.isArray(tutorIds) ? [...tutorIds] : [];
+    const allStudentIds = Array.isArray(studentIds) ? [...studentIds] : [];
+    const allParentIds = Array.isArray(parentIds) ? [...parentIds] : [];
+
+    if (Array.isArray(clientIds)) {
+      clientIds.forEach(cid => {
+        if (cid.startsWith('tut-') || cid.startsWith('TUT-')) allTutorIds.push(cid);
+        else if (cid.startsWith('stu-') || cid.startsWith('STU-')) allStudentIds.push(cid);
+        else if (cid.startsWith('par-') || cid.startsWith('PAR-')) allParentIds.push(cid);
+        else allTutorIds.push(cid);
+      });
+    }
+
+    // Lookup tutors
+    (db.tutors || []).filter(t => allTutorIds.includes(t.id) || allTutorIds.includes(t.tutorId)).forEach(t => {
+      selectedRecipients.push({
+        ...t,
+        type: 'Tutor',
+        whatsappPhoneNumber: t.whatsappPhoneNumber || t.mobile || t.phone
+      });
+    });
+
+    // Lookup students
+    (db.students || []).filter(s => allStudentIds.includes(s.id) || allStudentIds.includes(s.studentId)).forEach(s => {
+      selectedRecipients.push({
+        id: s.id,
+        fullName: s.studentName,
+        studentName: s.studentName,
+        whatsappPhoneNumber: s.parentPhone || s.phone || '',
+        mobile: s.parentPhone || s.phone || '',
+        phone: s.phone || s.parentPhone || '',
+        type: 'Student',
+        class: s.class || '',
+        subjects: s.requiredSubjects || [],
+        location: s.location || '',
+        whatsappOptIn: 'YES'
+      });
+    });
+
+    // Lookup parents
+    (db.parents || []).filter(p => allParentIds.includes(p.id) || allParentIds.includes(p.parentId)).forEach(p => {
+      selectedRecipients.push({
+        id: p.id,
+        fullName: p.parentName,
+        parentName: p.parentName,
+        whatsappPhoneNumber: p.whatsapp || p.mobile || '',
+        mobile: p.mobile || p.whatsapp || '',
+        phone: p.whatsapp || p.mobile || '',
+        type: 'Parent',
+        location: p.address || '',
+        whatsappOptIn: 'YES'
+      });
+    });
+  }
+
+  if (selectedRecipients.length === 0) {
+    return res.status(400).json({ error: 'No recipients selected for WhatsApp bulk messaging' });
+  }
+
   const bulkId = 'bulk-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
   const now = new Date().toISOString();
 
   // Execute bulk dispatch via WhatsApp Business API service layer
-  const bulkResult = await whatsappService.sendBulkTemplateMessages(selectedTutors, templateText, {
+  const bulkResult = await whatsappService.sendBulkTemplateMessages(selectedRecipients, templateText, {
     templateName: templateName || 'bulk_campaign',
     templateId,
     languageCode,
@@ -3146,14 +3562,6 @@ app.post('/api/whatsapp/bulk-send', async (req, res) => {
         createdAt: r.sentAt || now,
         updatedAt: now
       });
-
-      // Update contact
-      const contact = (db.whatsAppContacts || []).find(c => c.tutorId === r.tutorId);
-      if (contact) {
-        contact.lastMessageAt = now;
-        contact.lastOutboundMessageAt = now;
-        contact.updatedAt = now;
-      }
     }
 
     db.whatsappHistory.unshift({
@@ -3184,7 +3592,7 @@ app.post('/api/whatsapp/bulk-send', async (req, res) => {
     endpoint: '/api/whatsapp/bulk-send',
     requestType: 'BULK_SEND',
     tutorId: null,
-    tutorName: `Batch of ${selectedTutors.length} Tutors`,
+    tutorName: `Batch of ${selectedRecipients.length} Clients`,
     providerMessageId: `bulk-${Date.now()}`,
     httpStatus: 200,
     result: bulkResult.sent > 0 ? 'SUCCESS' : 'FAILED',
@@ -3194,7 +3602,7 @@ app.post('/api/whatsapp/bulk-send', async (req, res) => {
   if (!db.whatsAppConfig) db.whatsAppConfig = {};
   db.whatsAppConfig.lastApiRequestAt = now;
 
-  addLog(null, 'Admin', 'WHATSAPP_BULK_SENT', `Bulk WhatsApp message dispatched to ${bulkResult.sent} tutors via WhatsApp Business API.`);
+  addLog(null, 'Admin', 'WHATSAPP_BULK_SENT', `Bulk WhatsApp message dispatched to ${bulkResult.sent} clients via WhatsApp Business API.`);
   saveDB(db);
 
   broadcastWhatsAppEvent('bulk_sent', { summary: bulkResult.summary, bulkId });
@@ -3209,6 +3617,59 @@ app.post('/api/whatsapp/bulk-send', async (req, res) => {
     summary: bulkResult.summary,
     results: bulkResult.results
   });
+});
+
+// 7b. Unified Clients endpoint for Bulk Messaging UI
+app.get('/api/whatsapp/all-clients', (req, res) => {
+  const clients = [];
+
+  // 1. Students
+  (db.students || []).forEach(s => {
+    const rawPhone = s.parentPhone || s.phone || '';
+    clients.push({
+      id: s.id,
+      clientId: s.studentId || s.id,
+      name: s.studentName,
+      role: 'Student',
+      phone: cleanPhone(rawPhone) || rawPhone,
+      details: `Class: ${s.class || 'N/A'} • ${s.location || 'N/A'}`,
+      location: s.location || '',
+      whatsappOptIn: 'YES'
+    });
+  });
+
+  // 2. Parents
+  (db.parents || []).forEach(p => {
+    const rawPhone = p.whatsapp || p.mobile || '';
+    clients.push({
+      id: p.id,
+      clientId: p.parentId || p.id,
+      name: p.parentName,
+      role: 'Parent',
+      phone: cleanPhone(rawPhone) || rawPhone,
+      details: `Address: ${p.address || 'N/A'}`,
+      location: p.address || '',
+      whatsappOptIn: 'YES'
+    });
+  });
+
+  // 3. Tutors
+  (db.tutors || []).forEach(t => {
+    const rawPhone = t.whatsappPhoneNumber || t.mobile || t.phone || '';
+    const subs = Array.isArray(t.subjects) ? t.subjects.join(', ') : (t.subjects || '');
+    clients.push({
+      id: t.id,
+      clientId: t.tutorId || t.id,
+      name: t.fullName,
+      role: 'Tutor',
+      phone: cleanPhone(rawPhone) || rawPhone,
+      details: `${subs} • ${t.preferredLocation || 'N/A'}`,
+      location: t.preferredLocation || '',
+      whatsappOptIn: t.whatsappOptIn || 'YES'
+    });
+  });
+
+  res.json({ success: true, clients, total: clients.length });
 });
 
 // 8. Get WhatsApp Dashboard Stats
@@ -3353,67 +3814,115 @@ app.get('/api/whatsapp/contacts', (req, res) => {
   res.json({ success: true, contacts: list, total: list.length });
 });
 
-// 13. WhatsApp Settings Configuration API (Masked Credentials)
+// 13. WhatsApp Settings Configuration API (Meta for Developers)
 app.get('/api/whatsapp/settings', (req, res) => {
   const config = db.whatsAppConfig || {};
-  const hasToken = Boolean(process.env.WHATSAPP_ACCESS_TOKEN && !process.env.WHATSAPP_ACCESS_TOKEN.includes('placeholder'));
-  const hasSecret = Boolean(process.env.WHATSAPP_APP_SECRET && !process.env.WHATSAPP_APP_SECRET.includes('placeholder'));
+  const token = config.accessToken || process.env.WHATSAPP_ACCESS_TOKEN || '';
+  const secret = config.appSecret || process.env.WHATSAPP_APP_SECRET || '';
+  const hasToken = Boolean(token && !token.includes('placeholder'));
+  const hasSecret = Boolean(secret && !secret.includes('placeholder'));
 
   res.json({
     success: true,
     settings: {
-      businessAccountId: process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || config.businessAccountId || '192837465019283',
-      phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID || config.phoneNumberId || '109283746501928',
-      apiVersion: process.env.WHATSAPP_API_VERSION || config.apiVersion || 'v20.0',
-      webhookUrl: process.env.WHATSAPP_WEBHOOK_URL || config.webhookUrl || 'http://localhost:5001/api/webhooks/whatsapp',
+      businessAccountId: config.businessAccountId || process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || '192837465019283',
+      phoneNumberId: config.phoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID || '109283746501928',
+      apiVersion: config.apiVersion || process.env.WHATSAPP_API_VERSION || 'v20.0',
+      webhookUrl: config.webhookUrl || process.env.WHATSAPP_WEBHOOK_URL || 'http://localhost:5001/api/webhooks/whatsapp',
+      verifyToken: config.verifyToken || process.env.WHATSAPP_VERIFY_TOKEN || 'tutorconnect_meta_verify_token_2026',
       webhookVerified: Boolean(config.webhookVerified),
-      connectionStatus: hasToken ? 'CONNECTED' : 'SANDBOX_ACTIVE',
+      connectionStatus: config.connectionStatus || (hasToken ? 'CONNECTED' : 'SANDBOX_ACTIVE'),
+      verifiedName: config.verifiedName || null,
+      displayPhoneNumber: config.displayPhoneNumber || null,
       lastWebhookReceivedAt: config.lastWebhookReceivedAt || null,
       lastApiRequestAt: config.lastApiRequestAt || null,
-      maskedAccessToken: '••••••••••••••••••••••••••••••••',
-      maskedAppSecret: '••••••••••••••••••••••••••••••••'
+      maskedAccessToken: hasToken ? (token.length > 8 ? `${token.slice(0, 4)}••••••••${token.slice(-4)}` : '••••••••••••••••') : '',
+      maskedAppSecret: hasSecret ? (secret.length > 8 ? `${secret.slice(0, 4)}••••••••${secret.slice(-4)}` : '••••••••••••••••') : '',
+      hasToken,
+      hasSecret
     }
   });
 });
 
 app.post('/api/whatsapp/settings', (req, res) => {
-  const { businessAccountId, phoneNumberId, apiVersion, webhookUrl } = req.body;
+  const { businessAccountId, phoneNumberId, apiVersion, webhookUrl, accessToken, appSecret, verifyToken } = req.body;
   if (!db.whatsAppConfig) db.whatsAppConfig = {};
 
   if (businessAccountId) db.whatsAppConfig.businessAccountId = businessAccountId;
   if (phoneNumberId) db.whatsAppConfig.phoneNumberId = phoneNumberId;
   if (apiVersion) db.whatsAppConfig.apiVersion = apiVersion;
   if (webhookUrl) db.whatsAppConfig.webhookUrl = webhookUrl;
+  if (verifyToken) db.whatsAppConfig.verifyToken = verifyToken;
+
+  if (accessToken && !accessToken.includes('•••')) {
+    db.whatsAppConfig.accessToken = accessToken.trim();
+  }
+  if (appSecret && !appSecret.includes('•••')) {
+    db.whatsAppConfig.appSecret = appSecret.trim();
+  }
+
   db.whatsAppConfig.updatedAt = new Date().toISOString();
 
   saveDB(db);
-  whatsappService.refreshConfig();
+  whatsappService.refreshConfig(db.whatsAppConfig);
 
-  res.json({ success: true, message: 'WhatsApp configuration saved successfully', settings: db.whatsAppConfig });
+  res.json({
+    success: true,
+    message: 'Meta WhatsApp configuration saved successfully',
+    settings: db.whatsAppConfig
+  });
 });
 
-// 14. Test Connection
+// 14. Test Connection with Meta for Developers
 app.post('/api/whatsapp/test-connection', async (req, res) => {
-  const hasToken = Boolean(process.env.WHATSAPP_ACCESS_TOKEN && !process.env.WHATSAPP_ACCESS_TOKEN.includes('placeholder'));
+  whatsappService.refreshConfig(db.whatsAppConfig || {});
+  const token = whatsappService.accessToken;
+  const phoneId = whatsappService.phoneNumberId;
+  const apiVersion = whatsappService.apiVersion || 'v20.0';
   const now = new Date().toISOString();
 
   if (!db.whatsAppConfig) db.whatsAppConfig = {};
   db.whatsAppConfig.lastApiRequestAt = now;
-  saveDB(db);
 
-  if (hasToken) {
-    res.json({
-      success: true,
-      status: 'CONNECTED',
-      message: 'Meta WhatsApp Cloud API connection verified successfully.'
-    });
-  } else {
-    res.json({
-      success: true,
-      status: 'SANDBOX_READY',
-      message: 'Running in simulated local sandbox mode. Ready to transmit mock provider messages.'
-    });
+  if (token && !token.includes('placeholder') && phoneId) {
+    try {
+      const metaRes = await fetch(`https://graph.facebook.com/${apiVersion}/${phoneId}?fields=verified_name,code_verification_status,display_phone_number,quality_rating`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const metaData = await metaRes.json();
+      if (metaRes.ok) {
+        db.whatsAppConfig.connectionStatus = 'CONNECTED';
+        db.whatsAppConfig.verifiedName = metaData.verified_name || 'WhatsApp Business';
+        db.whatsAppConfig.displayPhoneNumber = metaData.display_phone_number || phoneId;
+        saveDB(db);
+        return res.json({
+          success: true,
+          status: 'CONNECTED',
+          message: `Connected successfully to Meta for Developers! Verified Name: "${metaData.verified_name || 'WhatsApp Business'}" (${metaData.display_phone_number || phoneId})`,
+          meta: metaData
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          status: 'META_AUTH_ERROR',
+          message: metaData.error?.message || 'Meta Cloud API rejected authentication. Please check your Access Token and Phone Number ID.'
+        });
+      }
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        status: 'NETWORK_ERROR',
+        message: 'Could not connect to Meta Graph API: ' + err.message
+      });
+    }
   }
+
+  saveDB(db);
+  res.json({
+    success: true,
+    status: 'SANDBOX_READY',
+    message: 'Local sandbox active. To transmit live WhatsApp messages via Meta, configure your Meta for Developers credentials above.'
+  });
 });
 
 // 15. Test Webhook Simulation
@@ -3780,6 +4289,186 @@ app.get('/api/tutors/:id/priority-breakdown', (req, res) => {
   });
 });
 
+// ============================================================================
+// STUDY MATERIALS API (CLASS 1 TO CLASS 12)
+// ============================================================================
+app.get('/api/study-materials', (req, res) => {
+  let list = [...(db.studyMaterials || [])];
+  const { classGrade, subject, category, search } = req.query;
+
+  if (classGrade && classGrade !== 'ALL') {
+    list = list.filter(m => (m.classGrade || '').toLowerCase() === classGrade.toLowerCase());
+  }
+
+  if (subject && subject !== 'ALL') {
+    list = list.filter(m => (m.subject || '').toLowerCase() === subject.toLowerCase());
+  }
+
+  if (category && category !== 'ALL') {
+    list = list.filter(m => (m.category || '').toLowerCase() === category.toLowerCase());
+  }
+
+  if (search) {
+    const q = search.toLowerCase();
+    list = list.filter(m =>
+      (m.title && m.title.toLowerCase().includes(q)) ||
+      (m.description && m.description.toLowerCase().includes(q)) ||
+      (m.subject && m.subject.toLowerCase().includes(q)) ||
+      (m.classGrade && m.classGrade.toLowerCase().includes(q))
+    );
+  }
+
+  res.json({ success: true, materials: list, total: list.length });
+});
+
+app.post('/api/study-materials', (req, res) => {
+  const { title, classGrade, subject, category, fileUrl, fileSize, fileFormat, description } = req.body;
+  if (!title || !classGrade || !subject) {
+    return res.status(400).json({ error: 'Title, Class (Class 1 to 12), and Subject are required.' });
+  }
+
+  if (!db.studyMaterials) db.studyMaterials = [];
+  const nextNum = (db.studyMaterials.length + 1).toString().padStart(3, '0');
+  const newMaterial = {
+    id: 'mat-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+    materialId: 'MAT-2026-' + nextNum,
+    title,
+    classGrade: classGrade || 'Class 10',
+    subject: subject || 'General',
+    category: category || 'Notes',
+    fileUrl: fileUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    fileSize: fileSize || '2.5 MB',
+    fileFormat: fileFormat || 'PDF',
+    description: description || '',
+    uploadedBy: 'Admin',
+    uploadDate: new Date().toISOString(),
+    downloadsCount: 0,
+    status: 'ACTIVE'
+  };
+
+  db.studyMaterials.unshift(newMaterial);
+  addLog(null, 'Admin', 'STUDY_MATERIAL_ADDED', `Admin uploaded new study material: "${title}" for ${classGrade} (${subject}).`);
+  saveDB(db);
+
+  res.status(201).json({ success: true, material: newMaterial });
+});
+
+app.put('/api/study-materials/:id', (req, res) => {
+  if (!db.studyMaterials) db.studyMaterials = [];
+  const material = db.studyMaterials.find(m => m.id === req.params.id || m.materialId === req.params.id);
+  if (!material) return res.status(404).json({ error: 'Study material not found' });
+
+  const { title, classGrade, subject, category, fileUrl, fileSize, fileFormat, description, status } = req.body;
+  if (title) material.title = title;
+  if (classGrade) material.classGrade = classGrade;
+  if (subject) material.subject = subject;
+  if (category) material.category = category;
+  if (fileUrl) material.fileUrl = fileUrl;
+  if (fileSize) material.fileSize = fileSize;
+  if (fileFormat) material.fileFormat = fileFormat;
+  if (description !== undefined) material.description = description;
+  if (status) material.status = status;
+  material.updatedAt = new Date().toISOString();
+
+  saveDB(db);
+  res.json({ success: true, material });
+});
+
+app.delete('/api/study-materials/:id', (req, res) => {
+  if (!db.studyMaterials) db.studyMaterials = [];
+  const beforeCount = db.studyMaterials.length;
+  db.studyMaterials = db.studyMaterials.filter(m => m.id !== req.params.id && m.materialId !== req.params.id);
+
+  if (db.studyMaterials.length === beforeCount) {
+    return res.status(404).json({ error: 'Study material not found' });
+  }
+
+  addLog(null, 'Admin', 'STUDY_MATERIAL_DELETED', `Admin deleted study material ID: ${req.params.id}.`);
+  saveDB(db);
+  res.json({ success: true, message: 'Study material deleted successfully' });
+});
+
+// ============================================================================
+// SEPARATE DASHBOARDS ANALYTICS
+// ============================================================================
+app.get('/api/dashboard/students-analytics', (req, res) => {
+  const students = db.students || [];
+  const parents = db.parents || [];
+  const appointments = db.appointments || [];
+
+  // Class 1 to 12 distribution
+  const classCounts = {};
+  for (let c = 1; c <= 12; c++) {
+    classCounts[`Class ${c}`] = 0;
+  }
+
+  students.forEach(s => {
+    let c = s.class || '';
+    if (!c.toLowerCase().includes('class')) {
+      const match = c.match(/\d+/);
+      if (match) c = `Class ${match[0]}`;
+    }
+    classCounts[c] = (classCounts[c] || 0) + 1;
+  });
+
+  // Subject demand breakdown
+  const subjectDemand = {};
+  students.forEach(s => {
+    (s.requiredSubjects || []).forEach(sub => {
+      subjectDemand[sub] = (subjectDemand[sub] || 0) + 1;
+    });
+  });
+
+  const assignedCount = students.filter(s => s.status === 'TUTOR_ASSIGNED' || s.assignedTutorId).length;
+  const lookingCount = students.length - assignedCount;
+
+  res.json({
+    success: true,
+    totalStudents: students.length,
+    totalParents: parents.length,
+    activeTuitions: appointments.filter(a => a.status === 'ACTIVE').length,
+    assignedCount,
+    lookingCount,
+    classDistribution: Object.entries(classCounts).map(([cls, count]) => ({ classGrade: cls, count })),
+    subjectDemand: Object.entries(subjectDemand).map(([subject, count]) => ({ subject, count })),
+    recentStudents: students.slice(0, 8)
+  });
+});
+
+app.get('/api/dashboard/teachers-analytics', (req, res) => {
+  const tutors = db.tutors || [];
+  const appointments = db.appointments || [];
+
+  const highPriority = tutors.filter(t => (t.priorityLevel || t.priority) === 'HIGH_PRIORITY').length;
+  const mediumPriority = tutors.filter(t => (t.priorityLevel || t.priority) === 'MEDIUM_PRIORITY').length;
+  const lowPriority = tutors.filter(t => (t.priorityLevel || t.priority) === 'LOW_PRIORITY').length;
+  const unassigned = tutors.filter(t => !t.priority || t.priority === 'NOT_ASSIGNED').length;
+
+  const totalScore = tutors.reduce((sum, t) => sum + (t.priorityScore || 0), 0);
+  const averageScore = tutors.length > 0 ? Number((totalScore / tutors.length).toFixed(1)) : 0;
+
+  const pipeline = [
+    { stage: 'Applications', count: tutors.filter(t => t.status === 'NEW_APPLICATION').length, color: '#3b82f6' },
+    { stage: 'Priority Scored', count: tutors.filter(t => t.priorityScore !== undefined && t.priority !== 'NOT_ASSIGNED').length, color: '#eab308' },
+    { stage: 'Validated', count: tutors.filter(t => t.status === 'VALIDATED' || t.isValidated).length, color: '#6366f1' },
+    { stage: 'Documents', count: tutors.filter(t => t.status === 'DOCUMENT_VERIFICATION' || t.status === 'DOCUMENT_APPROVED').length, color: '#f97316' },
+    { stage: 'Interviews', count: tutors.filter(t => t.status && t.status.startsWith('INTERVIEW_')).length, color: '#8b5cf6' },
+    { stage: 'Demo Classes', count: tutors.filter(t => t.status && t.status.startsWith('DEMO_CLASS_')).length, color: '#06b6d4' },
+    { stage: 'Parent Approval', count: tutors.filter(t => t.status && t.status.startsWith('PARENT_')).length, color: '#ec4899' },
+    { stage: 'Appointed / Active', count: tutors.filter(t => t.status === 'TUTOR_APPOINTED' || t.status === 'ACTIVE' || t.isAppointed).length, color: '#10b981' }
+  ];
+
+  res.json({
+    success: true,
+    totalTeachers: tutors.length,
+    activeAppointments: appointments.filter(a => a.status === 'ACTIVE').length,
+    averageScore,
+    priorityBreakdown: { high: highPriority, medium: mediumPriority, low: lowPriority, unassigned },
+    pipeline,
+    topTeachers: [...tutors].sort((a, b) => (b.priorityScore || 0) - (a.priorityScore || 0)).slice(0, 10)
+  });
+});
+
 app.listen(PORT, () => {
-  console.log('TutorConnect Server running on http://localhost:' + PORT);
+  console.log('CHARITHRA-Edutech Server running on http://localhost:' + PORT);
 });

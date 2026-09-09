@@ -416,6 +416,8 @@ export interface BulkSendResponse {
   total: number;
   sent: number;
   failed: number;
+  invalid?: number;
+  skipped?: number;
   summary: BulkSendSummary;
   results: BulkSendResultItem[];
 }
@@ -511,6 +513,13 @@ export interface WhatsAppSettingsConfig {
   lastApiRequestAt?: string | null;
   maskedAccessToken: string;
   maskedAppSecret: string;
+  accessToken?: string;
+  appSecret?: string;
+  verifyToken?: string;
+  verifiedName?: string | null;
+  displayPhoneNumber?: string | null;
+  hasToken?: boolean;
+  hasSecret?: boolean;
 }
 
 export interface WhatsAppWebhookLog {
@@ -558,3 +567,43 @@ export interface TutorWhatsAppDetailResponse {
   };
   messages: WhatsAppMessage[];
 }
+
+export interface StudyMaterial {
+  id: string;
+  materialId: string;
+  title: string;
+  classGrade: string;
+  subject: string;
+  category: 'Notes' | 'Question Paper' | 'Worksheet' | 'Textbook' | 'Video Lesson';
+  fileUrl: string;
+  fileSize?: string;
+  fileFormat?: string;
+  description?: string;
+  uploadedBy?: string;
+  uploadDate: string;
+  downloadsCount?: number;
+  status: 'ACTIVE' | 'ARCHIVED';
+}
+
+export interface StudentsAnalytics {
+  success: boolean;
+  totalStudents: number;
+  totalParents: number;
+  activeTuitions: number;
+  assignedCount: number;
+  lookingCount: number;
+  classDistribution: { classGrade: string; count: number }[];
+  subjectDemand: { subject: string; count: number }[];
+  recentStudents: Student[];
+}
+
+export interface TeachersAnalytics {
+  success: boolean;
+  totalTeachers: number;
+  activeAppointments: number;
+  averageScore: number;
+  priorityBreakdown: { high: number; medium: number; low: number; unassigned: number };
+  pipeline: { stage: string; count: number; color: string }[];
+  topTeachers: Tutor[];
+}
+
