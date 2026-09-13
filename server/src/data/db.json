@@ -1,6 +1,44 @@
 {
   "tutors": [
     {
+      "id": "tut-1789299904729",
+      "tutorId": "TUT-2026-075",
+      "externalLeadId": "web_apply_1789299904729",
+      "fullName": "Sanjay Varma",
+      "mobile": "+919689299904",
+      "phone": "+919689299904",
+      "whatsapp": "+919689299904",
+      "email": "sanjay.tutor.1789299904@example.com",
+      "gender": "Not Provided",
+      "dob": "Not Provided",
+      "qualification": "M.Sc Physics",
+      "specialization": "Education",
+      "experience": "4 Years",
+      "experienceYears": 4,
+      "subjects": [
+        "Physics",
+        "Mathematics"
+      ],
+      "subjectsText": "Physics, Mathematics",
+      "homeTuitionAvailable": "yes",
+      "preferredLocation": "Centre Offline + Online",
+      "availableTiming": "Flexible",
+      "expectedSalary": 15000,
+      "priority": "NOT_ASSIGNED",
+      "status": "NEW_APPLICATION",
+      "leadSource": "WEBSITE",
+      "platform": "website",
+      "campaignName": "Website Teacher Career Application",
+      "adName": "Online Tutor Recruitment",
+      "notes": "Experienced physics teacher enthusiastic to join faculty.",
+      "createdAt": "2026-09-13T11:45:04.729Z",
+      "updatedAt": "2026-09-13T11:45:04.729Z",
+      "originalPhoneNumber": "+919689299904",
+      "whatsappPhoneNumber": "+919689299904",
+      "whatsappOptIn": "YES",
+      "sourceCreatedAt": "2026-09-13T11:45:04.729Z"
+    },
+    {
       "id": "tut-1789281130329",
       "tutorId": "TUT-2026-074",
       "externalLeadId": "web_apply_1789281130329",
@@ -38,7 +76,7 @@
       "whatsappOptIn": "YES",
       "sourceCreatedAt": "2026-09-13T06:32:10.329Z",
       "priorityScore": 70,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.422Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -128,7 +166,7 @@
       "whatsappOptIn": "YES",
       "sourceCreatedAt": "2026-09-13T06:31:42.694Z",
       "priorityScore": 70,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -216,7 +254,7 @@
       "isDeleted": true,
       "deletedAt": "2026-09-10T10:29:26.756Z",
       "priorityScore": 71,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -314,7 +352,7 @@
       "whatsappPhoneNumber": "+919655030391",
       "whatsappOptIn": "NO",
       "priorityScore": 39,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -412,7 +450,7 @@
       "whatsappPhoneNumber": "+917904550799",
       "whatsappOptIn": "UNKNOWN",
       "priorityScore": 29,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -510,7 +548,7 @@
       "whatsappPhoneNumber": "+918489920301",
       "whatsappOptIn": "YES",
       "priorityScore": 63,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -609,7 +647,7 @@
       "whatsappPhoneNumber": "+919597841951",
       "whatsappOptIn": "YES",
       "priorityScore": 19,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -708,7 +746,7 @@
       "whatsappPhoneNumber": "+919847450672",
       "whatsappOptIn": "YES",
       "priorityScore": 49,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -806,7 +844,7 @@
       "whatsappPhoneNumber": "+919003456548",
       "whatsappOptIn": "YES",
       "priorityScore": 97,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -902,7 +940,7 @@
       "whatsappPhoneNumber": "+918124412731",
       "whatsappOptIn": "YES",
       "priorityScore": 61,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -1000,7 +1038,7 @@
       "whatsappPhoneNumber": "+919677303236",
       "whatsappOptIn": "YES",
       "priorityScore": 39,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -1098,7 +1136,7 @@
       "whatsappPhoneNumber": "+919488352040",
       "whatsappOptIn": "YES",
       "priorityScore": 37,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -1198,7 +1236,7 @@
       "whatsappPhoneNumber": "+918056920624",
       "whatsappOptIn": "YES",
       "priorityScore": 50,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -1297,7 +1335,7 @@
       "whatsappPhoneNumber": "+919080303355",
       "whatsappOptIn": "YES",
       "priorityScore": 19,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -1396,7 +1434,7 @@
       "whatsappPhoneNumber": "+918637604590",
       "whatsappOptIn": "YES",
       "priorityScore": 63,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -1494,7 +1532,7 @@
       "whatsappPhoneNumber": "+918667448171",
       "whatsappOptIn": "YES",
       "priorityScore": 63,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -1593,7 +1631,7 @@
       "whatsappPhoneNumber": "+918667358470",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -1693,7 +1731,7 @@
       "whatsappPhoneNumber": "+919361649326",
       "whatsappOptIn": "YES",
       "priorityScore": 57,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -1793,7 +1831,7 @@
       "whatsappPhoneNumber": "+917603860588",
       "whatsappOptIn": "YES",
       "priorityScore": 37,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -1893,7 +1931,7 @@
       "whatsappPhoneNumber": "+919159114897",
       "whatsappOptIn": "YES",
       "priorityScore": 67,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -1993,7 +2031,7 @@
       "whatsappPhoneNumber": "+919566868277",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -2097,7 +2135,7 @@
       "whatsappPhoneNumber": "+918883387943",
       "whatsappOptIn": "YES",
       "priorityScore": 70,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -2197,7 +2235,7 @@
       "whatsappPhoneNumber": "+917094396004",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -2297,7 +2335,7 @@
       "whatsappPhoneNumber": "+919597858312",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -2397,7 +2435,7 @@
       "whatsappPhoneNumber": "+916374736690",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -2497,7 +2535,7 @@
       "whatsappPhoneNumber": "+919361179927",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -2599,7 +2637,7 @@
       "whatsappPhoneNumber": "+919344262978",
       "whatsappOptIn": "YES",
       "priorityScore": 43,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.423Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -2699,7 +2737,7 @@
       "whatsappPhoneNumber": "+918903683094",
       "whatsappOptIn": "YES",
       "priorityScore": 50,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -2798,7 +2836,7 @@
       "whatsappPhoneNumber": "+917010189406",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -2897,7 +2935,7 @@
       "whatsappPhoneNumber": "+917010996758",
       "whatsappOptIn": "YES",
       "priorityScore": 57,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -2996,7 +3034,7 @@
       "whatsappPhoneNumber": "+919597916611",
       "whatsappOptIn": "YES",
       "priorityScore": 43,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -3095,7 +3133,7 @@
       "whatsappPhoneNumber": "+917598400396",
       "whatsappOptIn": "YES",
       "priorityScore": 53,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -3194,7 +3232,7 @@
       "whatsappPhoneNumber": "+917418632202",
       "whatsappOptIn": "YES",
       "priorityScore": 37,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -3294,7 +3332,7 @@
       "whatsappPhoneNumber": "+916383378385",
       "whatsappOptIn": "YES",
       "priorityScore": 50,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.207Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -3393,7 +3431,7 @@
       "whatsappPhoneNumber": "+918438751621",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -3498,7 +3536,7 @@
       "whatsappPhoneNumber": "+917418272542",
       "whatsappOptIn": "YES",
       "priorityScore": 50,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -3599,7 +3637,7 @@
       "whatsappPhoneNumber": "+919944037670",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -3701,7 +3739,7 @@
       "whatsappPhoneNumber": "+91934504218",
       "whatsappOptIn": "YES",
       "priorityScore": 27,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -3802,7 +3840,7 @@
       "whatsappPhoneNumber": "+917339420430",
       "whatsappOptIn": "YES",
       "priorityScore": 70,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -3903,7 +3941,7 @@
       "whatsappPhoneNumber": "+919791855106",
       "whatsappOptIn": "YES",
       "priorityScore": 50,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -4004,7 +4042,7 @@
       "whatsappPhoneNumber": "+918680979462",
       "whatsappOptIn": "YES",
       "priorityScore": 49,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -4103,7 +4141,7 @@
       "whatsappPhoneNumber": "+919084587114",
       "whatsappOptIn": "YES",
       "priorityScore": 70,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -4206,7 +4244,7 @@
       "whatsappPhoneNumber": "+917397385388",
       "whatsappOptIn": "YES",
       "priorityScore": 50,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -4306,7 +4344,7 @@
       "whatsappPhoneNumber": "+916385923922",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -4405,7 +4443,7 @@
       "whatsappPhoneNumber": "+919952327357",
       "whatsappOptIn": "YES",
       "priorityScore": 39,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -4503,7 +4541,7 @@
       "whatsappPhoneNumber": "+917010558366",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -4603,7 +4641,7 @@
       "whatsappPhoneNumber": "+918248138106",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -4704,7 +4742,7 @@
       "whatsappPhoneNumber": "+918220841575",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -4803,7 +4841,7 @@
       "whatsappPhoneNumber": "+919442846276",
       "whatsappOptIn": "YES",
       "priorityScore": 29,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -4901,7 +4939,7 @@
       "whatsappPhoneNumber": "+919003777624",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -5004,7 +5042,7 @@
       "whatsappPhoneNumber": "+916369311326",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -5108,7 +5146,7 @@
       "whatsappPhoneNumber": "+918754140324",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -5210,7 +5248,7 @@
       "whatsappPhoneNumber": "+919600783905",
       "whatsappOptIn": "YES",
       "priorityScore": 43,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -5309,7 +5347,7 @@
       "whatsappPhoneNumber": "+919025217016",
       "whatsappOptIn": "YES",
       "priorityScore": 50,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -5408,7 +5446,7 @@
       "whatsappPhoneNumber": "+918778314599",
       "whatsappOptIn": "YES",
       "priorityScore": 37,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -5514,7 +5552,7 @@
       "whatsappPhoneNumber": "+918778610732",
       "whatsappOptIn": "YES",
       "priorityScore": 49,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -5612,7 +5650,7 @@
       "whatsappPhoneNumber": "+919500328102",
       "whatsappOptIn": "YES",
       "priorityScore": 70,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -5713,7 +5751,7 @@
       "whatsappPhoneNumber": "+916379757833",
       "whatsappOptIn": "YES",
       "priorityScore": 40,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -5813,7 +5851,7 @@
       "whatsappPhoneNumber": "+918870452212",
       "whatsappOptIn": "YES",
       "priorityScore": 67,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -5912,7 +5950,7 @@
       "whatsappPhoneNumber": "+919786661562",
       "whatsappOptIn": "YES",
       "priorityScore": 39,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -6010,7 +6048,7 @@
       "whatsappPhoneNumber": "+919750514410",
       "whatsappOptIn": "YES",
       "priorityScore": 63,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -6109,7 +6147,7 @@
       "whatsappPhoneNumber": "+919600613090",
       "whatsappOptIn": "YES",
       "priorityScore": 50,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 10,
@@ -6208,7 +6246,7 @@
       "whatsappPhoneNumber": "+917904814471",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -6308,7 +6346,7 @@
       "whatsappPhoneNumber": "+919344133279",
       "whatsappOptIn": "YES",
       "priorityScore": 37,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -6408,7 +6446,7 @@
       "whatsappPhoneNumber": "+917598985653",
       "whatsappOptIn": "YES",
       "priorityScore": 37,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -6508,7 +6546,7 @@
       "whatsappPhoneNumber": "+918098594851",
       "whatsappOptIn": "YES",
       "priorityScore": 37,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 0,
@@ -6608,7 +6646,7 @@
       "whatsappPhoneNumber": "+919489193590",
       "whatsappOptIn": "YES",
       "priorityScore": 39,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -6706,7 +6744,7 @@
       "whatsappPhoneNumber": "+919360770870",
       "whatsappOptIn": "YES",
       "priorityScore": 70,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 30,
@@ -6805,7 +6843,7 @@
       "whatsappPhoneNumber": "+916379454210",
       "whatsappOptIn": "YES",
       "priorityScore": 60,
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "priorityBreakdown": {
         "experience": {
           "score": 20,
@@ -6937,7 +6975,7 @@
       },
       "priorityExplanation": "High Priority because this candidate strong teaching experience, teaches subjects currently in high student demand, is confirmed available for home tuition, verified advanced academic qualifications, location matches active student inquiries.",
       "lowPriorityReasons": [],
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "originalPhoneNumber": "+919842132463",
       "whatsappPhoneNumber": "+919842132463",
       "whatsappOptIn": "YES",
@@ -7028,7 +7066,7 @@
       },
       "priorityExplanation": "High Priority because this candidate strong teaching experience, teaches subjects currently in high student demand, is confirmed available for home tuition, verified advanced academic qualifications, location matches active student inquiries.",
       "lowPriorityReasons": [],
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "originalPhoneNumber": "+919842174725",
       "whatsappPhoneNumber": "+919842174725",
       "whatsappOptIn": "YES",
@@ -7118,7 +7156,7 @@
       },
       "priorityExplanation": "Medium Priority because this candidate has good baseline credentials (strong teaching experience, teaches subjects currently in high student demand), with potential for placement.",
       "lowPriorityReasons": [],
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "originalPhoneNumber": "+919842274725",
       "whatsappPhoneNumber": "+919842274725",
       "whatsappOptIn": "YES",
@@ -7208,7 +7246,7 @@
       },
       "priorityExplanation": "High Priority because this candidate strong teaching experience, teaches subjects currently in high student demand, is confirmed available for home tuition, verified advanced academic qualifications, location matches active student inquiries.",
       "lowPriorityReasons": [],
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "originalPhoneNumber": "+919842105306",
       "whatsappPhoneNumber": "+919842105306",
       "whatsappOptIn": "YES",
@@ -7299,7 +7337,7 @@
       },
       "priorityExplanation": "Medium Priority because this candidate has good baseline credentials (strong teaching experience, teaches subjects currently in high student demand), with potential for placement.",
       "lowPriorityReasons": [],
-      "lastPriorityCalculatedAt": "2026-09-13T07:02:42.208Z",
+      "lastPriorityCalculatedAt": "2026-09-13T11:40:33.424Z",
       "originalPhoneNumber": "+919842205306",
       "whatsappPhoneNumber": "+919842205306",
       "whatsappOptIn": "YES",
@@ -13098,6 +13136,66 @@
       "remarks": "Awaiting candidate verification",
       "uploadedAt": "2026-09-13T06:32:10.329Z",
       "updatedAt": "2026-09-13T06:32:10.329Z"
+    },
+    {
+      "id": "doc-tut-1789299904729-1",
+      "tutorId": "tut-1789299904729",
+      "docType": "Resume",
+      "fileName": "Sanjay_Varma_Resume.pdf",
+      "status": "Pending",
+      "remarks": "Awaiting candidate verification",
+      "uploadedAt": "2026-09-13T11:45:04.729Z",
+      "updatedAt": "2026-09-13T11:45:04.729Z"
+    },
+    {
+      "id": "doc-tut-1789299904729-2",
+      "tutorId": "tut-1789299904729",
+      "docType": "Qualification Certificate",
+      "fileName": "Sanjay_Varma_Qualification_Certificate.pdf",
+      "status": "Pending",
+      "remarks": "Awaiting candidate verification",
+      "uploadedAt": "2026-09-13T11:45:04.729Z",
+      "updatedAt": "2026-09-13T11:45:04.729Z"
+    },
+    {
+      "id": "doc-tut-1789299904729-3",
+      "tutorId": "tut-1789299904729",
+      "docType": "Degree Certificate",
+      "fileName": "Sanjay_Varma_Degree_Certificate.pdf",
+      "status": "Pending",
+      "remarks": "Awaiting candidate verification",
+      "uploadedAt": "2026-09-13T11:45:04.729Z",
+      "updatedAt": "2026-09-13T11:45:04.729Z"
+    },
+    {
+      "id": "doc-tut-1789299904729-4",
+      "tutorId": "tut-1789299904729",
+      "docType": "Experience Certificate",
+      "fileName": "Sanjay_Varma_Experience_Certificate.pdf",
+      "status": "Pending",
+      "remarks": "Awaiting candidate verification",
+      "uploadedAt": "2026-09-13T11:45:04.729Z",
+      "updatedAt": "2026-09-13T11:45:04.729Z"
+    },
+    {
+      "id": "doc-tut-1789299904729-5",
+      "tutorId": "tut-1789299904729",
+      "docType": "Address Proof",
+      "fileName": "Sanjay_Varma_Address_Proof.pdf",
+      "status": "Pending",
+      "remarks": "Awaiting candidate verification",
+      "uploadedAt": "2026-09-13T11:45:04.729Z",
+      "updatedAt": "2026-09-13T11:45:04.729Z"
+    },
+    {
+      "id": "doc-tut-1789299904729-6",
+      "tutorId": "tut-1789299904729",
+      "docType": "Photo ID",
+      "fileName": "Sanjay_Varma_Photo_ID.pdf",
+      "status": "Pending",
+      "remarks": "Awaiting candidate verification",
+      "uploadedAt": "2026-09-13T11:45:04.729Z",
+      "updatedAt": "2026-09-13T11:45:04.729Z"
     }
   ],
   "interviews": [
@@ -13430,6 +13528,46 @@
     }
   ],
   "activityLogs": [
+    {
+      "id": "act-1789299904729-468",
+      "tutorId": "tut-1789299904729",
+      "actor": "Website",
+      "action": "TUTOR_ONLINE_APPLICATION",
+      "description": "Direct online tutor application received from Sanjay Varma (TUT-2026-075, +919689299904).",
+      "message": "Direct online tutor application received from Sanjay Varma (TUT-2026-075, +919689299904).",
+      "timestamp": "2026-09-13T11:45:04.729Z",
+      "createdAt": "2026-09-13T11:45:04.729Z"
+    },
+    {
+      "id": "act-1789299904694-114",
+      "tutorId": null,
+      "actor": "Website",
+      "action": "WEBSITE_WORKSHOP_BOOKED",
+      "description": "New workshop seat booking from website: Rohan Menon (+919789299904) for Robotics Explorer Lab.",
+      "message": "New workshop seat booking from website: Rohan Menon (+919789299904) for Robotics Explorer Lab.",
+      "timestamp": "2026-09-13T11:45:04.694Z",
+      "createdAt": "2026-09-13T11:45:04.694Z"
+    },
+    {
+      "id": "act-1789299904660-330",
+      "tutorId": null,
+      "actor": "Website",
+      "action": "WEBSITE_ENQUIRY_RECEIVED",
+      "description": "New academic tuition enquiry received from website: Aadhya Menon (+919889299904) - Mathematics, Science.",
+      "message": "New academic tuition enquiry received from website: Aadhya Menon (+919889299904) - Mathematics, Science.",
+      "timestamp": "2026-09-13T11:45:04.660Z",
+      "createdAt": "2026-09-13T11:45:04.660Z"
+    },
+    {
+      "id": "act-1789296708740-506",
+      "tutorId": null,
+      "actor": "Website",
+      "action": "WEBSITE_ENQUIRY_RECEIVED",
+      "description": "New academic tuition enquiry received from website: Test Student (+919876543210) - Mathematics.",
+      "message": "New academic tuition enquiry received from website: Test Student (+919876543210) - Mathematics.",
+      "timestamp": "2026-09-13T10:51:48.740Z",
+      "createdAt": "2026-09-13T10:51:48.740Z"
+    },
     {
       "id": "act-1789281130329-429",
       "tutorId": "tut-1789281130329",
@@ -16647,6 +16785,42 @@
   ],
   "notifications": [
     {
+      "id": "notif-1789299904729-529",
+      "title": "New Teacher Application Received",
+      "message": "Sanjay Varma applied to teach Physics, Mathematics (Candidate TUT-2026-075).",
+      "type": "success",
+      "read": false,
+      "link": "/tutors",
+      "timestamp": "2026-09-13T11:45:04.729Z"
+    },
+    {
+      "id": "notif-1789299904694-951",
+      "title": "New Workshop Booking",
+      "message": "Rohan Menon booked for Robotics Explorer Lab on Next Saturday (10:00 AM - 1:30 PM). Phone: +919789299904",
+      "type": "success",
+      "read": false,
+      "link": "/leads",
+      "timestamp": "2026-09-13T11:45:04.694Z"
+    },
+    {
+      "id": "notif-1789299904660-554",
+      "title": "New Website Tuition Enquiry",
+      "message": "Aadhya Menon enrolled for Mathematics, Science (Grade 9, CBSE). Phone: +919889299904",
+      "type": "info",
+      "read": false,
+      "link": "/leads",
+      "timestamp": "2026-09-13T11:45:04.660Z"
+    },
+    {
+      "id": "notif-1789296708740-414",
+      "title": "New Website Tuition Enquiry",
+      "message": "Test Student enrolled for Mathematics (Grade 8, CBSE). Phone: +919876543210",
+      "type": "info",
+      "read": false,
+      "link": "/leads",
+      "timestamp": "2026-09-13T10:51:48.740Z"
+    },
+    {
       "id": "notif-1789281130329-299",
       "title": "New Teacher Application Received",
       "message": "Sanjay Varma applied to teach Physics, Mathematics (Candidate TUT-2026-074).",
@@ -17512,6 +17686,128 @@
     }
   ],
   "leads": [
+    {
+      "id": "lead-tutor-1789299904729",
+      "leadSource": "WEBSITE",
+      "platform": "website",
+      "name": "Sanjay Varma",
+      "phoneNumber": "+919689299904",
+      "email": "sanjay.tutor.1789299904@example.com",
+      "externalLeadId": "web_apply_1789299904729",
+      "campaignName": "Website Teacher Career Application",
+      "adName": "Online Tutor Recruitment",
+      "subjects": [
+        "Physics",
+        "Mathematics"
+      ],
+      "experience": "4 Years",
+      "message": "Teacher Career Application: Sanjay Varma (M.Sc Physics). Exp: 4 Years. Subjects: Physics, Mathematics. Message: Experienced physics teacher enthusiastic to join faculty.",
+      "messages": [
+        {
+          "id": "msg-1789299904729",
+          "sender": "user",
+          "text": "Teacher Career Application: Sanjay Varma (M.Sc Physics). Exp: 4 Years. Subjects: Physics, Mathematics. Message: Experienced physics teacher enthusiastic to join faculty.",
+          "timestamp": "2026-09-13T11:45:04.729Z"
+        }
+      ],
+      "status": "CONVERTED",
+      "convertedType": "TUTOR",
+      "convertedId": "tut-1789299904729",
+      "createdAt": "2026-09-13T11:45:04.729Z",
+      "sourceCreatedAt": "2026-09-13T11:45:04.729Z",
+      "updatedAt": "2026-09-13T11:45:04.729Z"
+    },
+    {
+      "id": "lead-ws-1789299904694",
+      "leadSource": "WEBSITE",
+      "platform": "website",
+      "name": "Rohan Menon",
+      "phoneNumber": "+919789299904",
+      "email": "Not Provided",
+      "externalLeadId": "web_ws_1789299904694",
+      "campaignName": "Workshop - Robotics Explorer Lab",
+      "adName": "One-Day Technology Pass",
+      "subjects": [
+        "Robotics Explorer Lab"
+      ],
+      "experience": "Grade 7 | Next Saturday (10:00 AM - 1:30 PM)",
+      "message": "One-Day Workshop Booking for Rohan Menon (Grade 7). Workshop: Robotics Explorer Lab. Selected Slot: Next Saturday (10:00 AM - 1:30 PM).",
+      "messages": [
+        {
+          "id": "msg-1789299904694",
+          "sender": "user",
+          "text": "One-Day Workshop Booking for Rohan Menon (Grade 7). Workshop: Robotics Explorer Lab. Selected Slot: Next Saturday (10:00 AM - 1:30 PM).",
+          "timestamp": "2026-09-13T11:45:04.694Z"
+        }
+      ],
+      "status": "NEW_LEAD",
+      "convertedType": null,
+      "convertedId": null,
+      "createdAt": "2026-09-13T11:45:04.694Z",
+      "sourceCreatedAt": "2026-09-13T11:45:04.694Z",
+      "updatedAt": "2026-09-13T11:45:04.694Z"
+    },
+    {
+      "id": "lead-web-1789299904660",
+      "leadSource": "WEBSITE",
+      "platform": "website",
+      "name": "Aadhya Menon",
+      "phoneNumber": "+919889299904",
+      "email": "Not Provided",
+      "externalLeadId": "web_enq_1789299904660",
+      "campaignName": "Academic Tuition Enquiry",
+      "adName": "BOTH Learning",
+      "subjects": [
+        "Mathematics",
+        "Science"
+      ],
+      "experience": "Grade 9 (CBSE)",
+      "message": "Academic Tuition Enquiry for Aadhya Menon (Grade 9, CBSE). Mode: BOTH. Subjects: Mathematics, Science.",
+      "messages": [
+        {
+          "id": "msg-1789299904660",
+          "sender": "user",
+          "text": "Academic Tuition Enquiry for Aadhya Menon (Grade 9, CBSE). Mode: BOTH. Subjects: Mathematics, Science.",
+          "timestamp": "2026-09-13T11:45:04.660Z"
+        }
+      ],
+      "status": "NEW_LEAD",
+      "convertedType": null,
+      "convertedId": null,
+      "createdAt": "2026-09-13T11:45:04.660Z",
+      "sourceCreatedAt": "2026-09-13T11:45:04.660Z",
+      "updatedAt": "2026-09-13T11:45:04.660Z"
+    },
+    {
+      "id": "lead-web-1789296708740",
+      "leadSource": "WEBSITE",
+      "platform": "website",
+      "name": "Test Student",
+      "phoneNumber": "+919876543210",
+      "email": "Not Provided",
+      "externalLeadId": "web_enq_1789296708740",
+      "campaignName": "Academic Tuition Enquiry",
+      "adName": "BOTH Learning",
+      "subjects": [
+        "Mathematics"
+      ],
+      "experience": "Grade 8 (CBSE)",
+      "message": "Academic Tuition Enquiry for Test Student (Grade 8, CBSE). Mode: BOTH. Subjects: Mathematics.",
+      "messages": [
+        {
+          "id": "msg-1789296708740",
+          "sender": "user",
+          "text": "Academic Tuition Enquiry for Test Student (Grade 8, CBSE). Mode: BOTH. Subjects: Mathematics.",
+          "timestamp": "2026-09-13T10:51:48.740Z"
+        }
+      ],
+      "status": "NEW_LEAD",
+      "convertedType": null,
+      "convertedId": null,
+      "createdAt": "2026-09-13T10:51:48.740Z",
+      "sourceCreatedAt": "2026-09-13T10:51:48.740Z",
+      "updatedAt": "2026-09-13T10:51:48.740Z"
+    },
     {
       "id": "lead-tutor-1789281130329",
       "leadSource": "WEBSITE",
@@ -25250,7 +25546,7 @@
       "conversationStatus": "OPEN",
       "unreadCount": 0,
       "createdAt": "2026-09-07T10:32:44.394Z",
-      "updatedAt": "2026-09-13T06:07:08.164Z"
+      "updatedAt": "2026-09-13T09:02:04.085Z"
     },
     {
       "id": "wac-tut-004",

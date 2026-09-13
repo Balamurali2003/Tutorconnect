@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const whatsappService = require('./services/whatsappService');
 const priorityEngine = require('./services/priorityEngine');
+const mysqlDb = require('./services/mysqlDb');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -3709,6 +3710,9 @@ app.post('/api/public/enquiry', (req, res) => {
   );
 
   saveDB(db);
+  if (mysqlDb && mysqlDb.insertLeadToMySQL) {
+    mysqlDb.insertLeadToMySQL(newLead).catch(function(e) { console.error('MySQL sync error:', e); });
+  }
   res.status(201).json({
     success: true,
     lead: newLead,
@@ -3771,6 +3775,9 @@ app.post('/api/public/workshop', (req, res) => {
   );
 
   saveDB(db);
+  if (mysqlDb && mysqlDb.insertLeadToMySQL) {
+    mysqlDb.insertLeadToMySQL(newLead).catch(function(e) { console.error('MySQL sync error:', e); });
+  }
   res.status(201).json({
     success: true,
     lead: newLead,
@@ -3910,6 +3917,10 @@ app.post('/api/public/tutor-apply', (req, res) => {
   );
 
   saveDB(db);
+  if (mysqlDb) {
+    if (mysqlDb.insertTutorToMySQL) mysqlDb.insertTutorToMySQL(newTutor).catch(function(e) { console.error('MySQL sync error:', e); });
+    if (mysqlDb.insertLeadToMySQL) mysqlDb.insertLeadToMySQL(newLead).catch(function(e) { console.error('MySQL sync error:', e); });
+  }
   res.status(201).json({
     success: true,
     tutor: newTutor,
