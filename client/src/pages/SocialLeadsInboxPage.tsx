@@ -23,11 +23,12 @@ import {
   CheckCircle2,
   MessageCircle,
   Trash2,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Globe
 } from 'lucide-react';
 
 interface SocialLeadsInboxPageProps {
-  initialSource?: 'ALL' | 'WHATSAPP' | 'FACEBOOK' | 'INSTAGRAM';
+  initialSource?: 'ALL' | 'WEBSITE' | 'WHATSAPP' | 'FACEBOOK' | 'INSTAGRAM';
 }
 
 export const SocialLeadsInboxPage: React.FC<SocialLeadsInboxPageProps> = ({
@@ -35,7 +36,7 @@ export const SocialLeadsInboxPage: React.FC<SocialLeadsInboxPageProps> = ({
 }) => {
   const { addToast, refreshTrigger, triggerRefresh, setSelectedTutorId } = useApp();
 
-  const [activeSource, setActiveSource] = useState<'ALL' | 'WHATSAPP' | 'FACEBOOK' | 'INSTAGRAM'>(initialSource);
+  const [activeSource, setActiveSource] = useState<'ALL' | 'WEBSITE' | 'WHATSAPP' | 'FACEBOOK' | 'INSTAGRAM'>(initialSource);
   const [leads, setLeads] = useState<SocialLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -113,6 +114,7 @@ export const SocialLeadsInboxPage: React.FC<SocialLeadsInboxPageProps> = ({
     );
   });
 
+  const webCount = leads.filter((l) => l.leadSource === 'WEBSITE').length;
   const waCount = leads.filter((l) => l.leadSource === 'WHATSAPP').length;
   const fbCount = leads.filter((l) => l.leadSource === 'FACEBOOK').length;
   const igCount = leads.filter((l) => l.leadSource === 'INSTAGRAM').length;
@@ -255,6 +257,13 @@ export const SocialLeadsInboxPage: React.FC<SocialLeadsInboxPageProps> = ({
 
   const getSourceBadge = (source: LeadSource) => {
     switch (source) {
+      case 'WEBSITE':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+            🌐 Website
+          </span>
+        );
       case 'WHATSAPP':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -367,7 +376,7 @@ export const SocialLeadsInboxPage: React.FC<SocialLeadsInboxPageProps> = ({
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
         <div
           onClick={() => setActiveSource('ALL')}
           className={`cursor-pointer p-4 rounded-2xl border transition-all ${
@@ -377,11 +386,27 @@ export const SocialLeadsInboxPage: React.FC<SocialLeadsInboxPageProps> = ({
           }`}
         >
           <div className="flex justify-between items-center text-xs text-slate-500 font-semibold mb-1">
-            <span>All Social Leads</span>
+            <span>All Leads</span>
             <Share2 className="w-4 h-4 text-indigo-600" />
           </div>
           <div className="text-2xl font-black text-slate-900">{leads.length}</div>
-          <div className="text-[10px] text-slate-400 mt-1 font-medium">Consolidated live queue</div>
+          <div className="text-[10px] text-slate-400 mt-1 font-medium">Consolidated queue</div>
+        </div>
+
+        <div
+          onClick={() => setActiveSource('WEBSITE')}
+          className={`cursor-pointer p-4 rounded-2xl border transition-all ${
+            activeSource === 'WEBSITE'
+              ? 'bg-amber-50 border-amber-300 shadow-sm ring-2 ring-amber-500/20'
+              : 'bg-white border-slate-200/80 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex justify-between items-center text-xs text-amber-800 font-semibold mb-1">
+            <span>Website Portal</span>
+            <Globe className="w-4 h-4 text-amber-600" />
+          </div>
+          <div className="text-2xl font-black text-amber-950">{webCount}</div>
+          <div className="text-[10px] text-amber-700/70 mt-1 font-medium">Direct Enquiries & Forms</div>
         </div>
 
         <div
@@ -437,7 +462,7 @@ export const SocialLeadsInboxPage: React.FC<SocialLeadsInboxPageProps> = ({
       <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Source Switcher */}
         <div className="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-xl self-start md:self-auto overflow-x-auto w-full md:w-auto">
-          {(['ALL', 'WHATSAPP', 'FACEBOOK', 'INSTAGRAM'] as const).map((s) => (
+          {(['ALL', 'WEBSITE', 'WHATSAPP', 'FACEBOOK', 'INSTAGRAM'] as const).map((s) => (
             <button
               key={s}
               onClick={() => setActiveSource(s)}
@@ -447,7 +472,7 @@ export const SocialLeadsInboxPage: React.FC<SocialLeadsInboxPageProps> = ({
                   : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              {s === 'ALL' ? 'All Leads' : s === 'WHATSAPP' ? 'WhatsApp' : s === 'FACEBOOK' ? 'Facebook' : 'Instagram'}
+              {s === 'ALL' ? 'All Leads' : s === 'WEBSITE' ? '🌐 Website' : s === 'WHATSAPP' ? 'WhatsApp' : s === 'FACEBOOK' ? 'Facebook' : 'Instagram'}
             </button>
           ))}
         </div>

@@ -1,3 +1,4 @@
+import { BrandLogo } from '../components/common/BrandLogo';
 import React, { useState, useEffect } from 'react';
 import { fetchStats, fetchActivityLogs, fetchPriorityStats } from '../services/api';
 import { MetricCards } from '../components/dashboard/MetricCards';
@@ -57,15 +58,20 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Top Welcome Header */}
-      <div className="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white p-6 rounded-3xl shadow-xl shadow-indigo-950/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <span className="text-[11px] font-extrabold uppercase tracking-widest text-indigo-300 bg-indigo-800/60 px-3 py-1 rounded-full border border-indigo-700/50">
-            Tuition Centre CRM Portal
-          </span>
-          <h1 className="text-2xl font-black tracking-tight mt-2">Welcome to TutorConnect</h1>
-          <p className="text-xs text-indigo-200 mt-1 max-w-xl leading-relaxed">
-            Manage end-to-end tutor recruitment pipeline, automatic priority intelligence, demo classes, parent approvals, and smart student matching.
-          </p>
+      <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-indigo-950/25 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border border-indigo-500/20">
+        <div className="flex items-center gap-5">
+          <div className="shrink-0 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xs">
+            <BrandLogo size="md" variant="dark" imageOnly />
+          </div>
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-[10px] font-extrabold tracking-wider text-indigo-300 mb-2">
+              <span>ADMIN DASHBOARD</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Charithra Learning Hub</h1>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed font-medium">
+              Empowering Learning. Connecting Tutors, Students &amp; Parents.
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">

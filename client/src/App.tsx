@@ -3,6 +3,26 @@ import { useApp } from './context/AppContext';
 import { Sidebar } from './components/layout/Sidebar';
 import { Navbar } from './components/layout/Navbar';
 import { ToastContainer } from './components/common/Toast';
+
+// Auth
+import { LoginPage } from './pages/auth/LoginPage';
+
+// Tutor Portal
+import { TutorLayout } from './components/tutor/TutorLayout';
+import { TutorDashboardPage } from './pages/tutor/TutorDashboardPage';
+import { TutorStudentsPage } from './pages/tutor/TutorStudentsPage';
+import { TutorClassesPage } from './pages/tutor/TutorClassesPage';
+import { TutorUpdateHistoryPage } from './pages/tutor/TutorUpdateHistoryPage';
+import { TutorProfilePage } from './pages/tutor/TutorProfilePage';
+
+// Parent Portal
+import { ParentLayout } from './components/parent/ParentLayout';
+import { ParentDashboardPage } from './pages/parent/ParentDashboardPage';
+import { ParentStudentProfilePage } from './pages/parent/ParentStudentProfilePage';
+import { ParentTutorUpdatesPage } from './pages/parent/ParentTutorUpdatesPage';
+import { ParentClassesPage } from './pages/parent/ParentClassesPage';
+
+// Admin CRM Pages
 import { DashboardPage } from './pages/DashboardPage';
 import { AllTutorsPage } from './pages/AllTutorsPage';
 import { PriorityTutorsPage } from './pages/PriorityTutorsPage';
@@ -14,6 +34,7 @@ import { ExcelImportPage } from './pages/ExcelImportPage';
 import { TutorMatchingPage } from './pages/TutorMatchingPage';
 import { ValidatedTutorsPage } from './pages/ValidatedTutorsPage';
 import { AppointedTutorsPage } from './pages/AppointedTutorsPage';
+import { AdminTutorUpdatesPage } from './pages/admin/AdminTutorUpdatesPage';
 import { SocialLeadsInboxPage } from './pages/SocialLeadsInboxPage';
 import { WhatsAppMessagingPage } from './pages/WhatsAppMessagingPage';
 import { WhatsAppTemplatesPage } from './pages/WhatsAppTemplatesPage';
@@ -29,14 +50,83 @@ import { WhatsAppTestPage } from './pages/WhatsAppTestPage';
 import { Tutor } from './types';
 
 export const App: React.FC = () => {
-  const { activeTab, setActiveTab, selectedTutorId, setSelectedTutorId } = useApp();
+  const {
+    activeTab,
+    setActiveTab,
+    selectedTutorId,
+    setSelectedTutorId,
+    currentUser,
+    isAuthenticated
+  } = useApp();
 
   const handleSelectTutor = (t: Tutor) => {
     setSelectedTutorId(t.id);
   };
 
-  const renderContent = () => {
-    // If a tutor profile is selected, render TutorDetailPage directly
+  // 1. Unauthenticated or Login Route Guard -> Render LoginPage
+  if (!isAuthenticated || activeTab === 'login') {
+    return (
+      <>
+        <LoginPage />
+        <ToastContainer />
+      </>
+    );
+  }
+
+  // 2. TUTOR PORTAL
+  if (currentUser?.role === 'TUTOR') {
+    const renderTutorContent = () => {
+      switch (activeTab) {
+        case 'tutor-dashboard':
+          return <TutorDashboardPage />;
+        case 'tutor-students':
+          return <TutorStudentsPage />;
+        case 'tutor-classes':
+          return <TutorClassesPage />;
+        case 'tutor-history':
+          return <TutorUpdateHistoryPage />;
+        case 'tutor-profile':
+          return <TutorProfilePage />;
+        default:
+          return <TutorDashboardPage />;
+      }
+    };
+
+    return (
+      <TutorLayout>
+        {renderTutorContent()}
+        <ToastContainer />
+      </TutorLayout>
+    );
+  }
+
+  // 3. PARENT PORTAL
+  if (currentUser?.role === 'PARENT') {
+    const renderParentContent = () => {
+      switch (activeTab) {
+        case 'parent-dashboard':
+          return <ParentDashboardPage />;
+        case 'parent-student':
+          return <ParentStudentProfilePage />;
+        case 'parent-tutor-updates':
+          return <ParentTutorUpdatesPage />;
+        case 'parent-classes':
+          return <ParentClassesPage />;
+        default:
+          return <ParentDashboardPage />;
+      }
+    };
+
+    return (
+      <ParentLayout>
+        {renderParentContent()}
+        <ToastContainer />
+      </ParentLayout>
+    );
+  }
+
+  // 4. ADMIN PORTAL (CRM)
+  const renderAdminContent = () => {
     if (selectedTutorId) {
       return (
         <TutorDetailPage
@@ -95,11 +185,16 @@ export const App: React.FC = () => {
           />
         );
 
+      case 'validate-tutor':
+      case 'validate-tutors':
       case 'validated-tutors':
         return <ValidatedTutorsPage onSelectTutor={handleSelectTutor} />;
 
       case 'appointed-tutors':
         return <AppointedTutorsPage onSelectTutor={handleSelectTutor} />;
+
+      case 'admin-tutor-updates':
+        return <AdminTutorUpdatesPage />;
 
       case 'communication-all':
         return <SocialLeadsInboxPage initialSource="ALL" />;
@@ -189,18 +284,18 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
-      {/* Left Sidebar */}
+      {/* Admin Left Sidebar */}
       <Sidebar />
 
-      {/* Main App Container */}
+      {/* Main Admin App Container */}
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar />
         <main className="flex-1 p-6 md:p-8 overflow-y-auto max-w-7xl w-full mx-auto">
-          {renderContent()}
+          {renderAdminContent()}
         </main>
       </div>
 
-      {/* Global Floating Toast Notifications */}
+      {/* Floating Toast Notifications */}
       <ToastContainer />
     </div>
   );

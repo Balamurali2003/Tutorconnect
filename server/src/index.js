@@ -17,6 +17,95 @@ app.use(express.json({
   }
 }));
 
+const crypto = require('crypto');
+const JWT_SECRET = process.env.JWT_SECRET || 'tutorconnect-jwt-secret-key-2026';
+
+// Helper: Base64URL Encoding & Decoding
+function base64UrlEncode(str) {
+  return Buffer.from(str)
+    .toString('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+}
+
+function base64UrlDecode(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return Buffer.from(str, 'base64').toString('utf8');
+}
+
+// Sign and Verify JWT Tokens
+function signToken(payload) {
+  const header = { alg: 'HS256', typ: 'JWT' };
+  const encodedHeader = base64UrlEncode(JSON.stringify(header));
+  const encodedPayload = base64UrlEncode(JSON.stringify({
+    ...payload,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + 7 * 24 * 3600 // 7 days validity
+  }));
+  const signature = crypto
+    .createHmac('sha256', JWT_SECRET)
+    .update(encodedHeader + '.' + encodedPayload)
+    .digest('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+  return encodedHeader + '.' + encodedPayload + '.' + signature;
+}
+
+function verifyToken(token) {
+  if (!token || typeof token !== 'string') return null;
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  const [encodedHeader, encodedPayload, signature] = parts;
+  const expectedSignature = crypto
+    .createHmac('sha256', JWT_SECRET)
+    .update(encodedHeader + '.' + encodedPayload)
+    .digest('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+  if (signature !== expectedSignature) return null;
+  try {
+    const payload = JSON.parse(base64UrlDecode(encodedPayload));
+    if (payload.exp && Math.floor(Date.now() / 1000) > payload.exp) return null;
+    return payload;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Universal Auth Middleware
+app.use((req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) {
+    req.user = null;
+    return next();
+  }
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader.trim();
+  const user = verifyToken(token);
+  req.user = user;
+  next();
+});
+
+// Role Guard Middleware
+function requireRole(roles = []) {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ success: false, error: 'Authentication required. Please log in.' });
+    }
+    if (roles.length > 0 && !roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. Requires role: ' + roles.join(' or ') + '.'
+      });
+    }
+    next();
+  };
+}
+
+
 // Server-Sent Events (SSE) for Real-Time WhatsApp Dashboard & Inbox Updates
 const sseClients = new Set();
 app.get('/api/whatsapp/events', (req, res) => {
@@ -314,6 +403,16 @@ function normalizeDatabase(data) {
       if (!s.sourceCreatedAt) s.sourceCreatedAt = s.createdAt || new Date().toISOString();
     });
   }
+  // Requirement 12: Ensure tutors who failed interview do not appear in Demo Classes
+  if (Array.isArray(data.demoClasses)) {
+    data.demoClasses = data.demoClasses.filter(demo => {
+      const tutor = (data.tutors || []).find(t => t.id === demo.tutorId);
+      const interview = (data.interviews || []).find(i => i.tutorId === demo.tutorId);
+      const isFailed = (tutor && (tutor.status === 'INTERVIEW_FAILED' || tutor.interviewResult === 'FAILED')) ||
+                       (interview && (interview.result === 'FAILED' || interview.interviewResult === 'FAILED' || interview.result === 'Rejected'));
+      return !isFailed;
+    });
+  }
   return data;
 }
 
@@ -340,6 +439,20 @@ function triggerPriorityRecalculation() {
 
 // Initial priority calculation on startup
 triggerPriorityRecalculation();
+
+// Admin DB hot-reload from disk
+app.post('/api/admin/reload-db', requireRole(['ADMIN']), (req, res) => {
+  try {
+    db = normalizeDatabase(loadDB());
+    if (!db.priorityConfig) {
+      db.priorityConfig = { ...priorityEngine.DEFAULT_WEIGHTS };
+    }
+    triggerPriorityRecalculation();
+    res.json({ success: true, message: 'Database reloaded from disk' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 function addLog(tutorId, actor, action, description) {
   const log = {
@@ -387,8 +500,8 @@ app.get('/api/stats', (req, res) => {
   const totalScore = tutors.reduce((sum, t) => sum + (t.priorityScore || 0), 0);
   const averageTutorScore = totalTutors > 0 ? Number((totalScore / totalTutors).toFixed(1)) : 0;
   const pendingVerification = tutors.filter(t => t.status === 'DOCUMENT_VERIFICATION' || t.status === 'VALIDATED').length;
-  const interviewsScheduled = tutors.filter(t => t.status && t.status.startsWith('INTERVIEW_')).length;
-  const demoClassesPending = tutors.filter(t => t.status && t.status.startsWith('DEMO_CLASS_')).length;
+  const interviewsScheduled = tutors.filter(t => t.status && (t.status === 'INTERVIEW_PENDING' || t.status === 'INTERVIEW_SCHEDULED' || t.status === 'INTERVIEW_ON_HOLD' || t.status === 'DOCUMENT_APPROVED')).length;
+  const demoClassesPending = tutors.filter(t => t.status && (t.status.startsWith('DEMO_CLASS_') || t.status === 'INTERVIEW_SELECTED')).length;
   const parentApprovalsPending = tutors.filter(t => t.status && t.status.startsWith('PARENT_')).length;
   const appointedTutors = tutors.filter(t => t.status === 'TUTOR_APPOINTED' || t.status === 'ACTIVE').length;
   const totalStudents = students.length;
@@ -399,8 +512,8 @@ app.get('/api/stats', (req, res) => {
     { stage: 'Priority Assigned', count: tutors.filter(t => t.priority === 'HIGH_PRIORITY' || t.priority === 'LOW_PRIORITY').length, color: '#eab308' },
     { stage: 'Validated', count: tutors.filter(t => t.status === 'VALIDATED').length, color: '#6366f1' },
     { stage: 'Doc Verification', count: tutors.filter(t => t.status === 'DOCUMENT_VERIFICATION' || t.status === 'DOCUMENT_APPROVED').length, color: '#f97316' },
-    { stage: 'Interview', count: tutors.filter(t => t.status && t.status.startsWith('INTERVIEW_')).length, color: '#8b5cf6' },
-    { stage: 'Demo Class', count: tutors.filter(t => t.status && t.status.startsWith('DEMO_CLASS_')).length, color: '#06b6d4' },
+    { stage: 'Interview', count: tutors.filter(t => t.status && (t.status.startsWith('INTERVIEW_') || t.status === 'DOCUMENT_APPROVED') && t.status !== 'INTERVIEW_SELECTED').length, color: '#8b5cf6' },
+    { stage: 'Demo Class', count: tutors.filter(t => t.status && (t.status.startsWith('DEMO_CLASS_') || t.status === 'INTERVIEW_SELECTED')).length, color: '#06b6d4' },
     { stage: 'Parent Approval', count: tutors.filter(t => t.status && t.status.startsWith('PARENT_')).length, color: '#ec4899' },
     { stage: 'Appointed / Active', count: appointedTutors, color: '#10b981' }
   ];
@@ -468,14 +581,16 @@ app.get('/api/stats', (req, res) => {
     locationDistribution,
     leadSourceStats: (() => {
       const leads = db.leads || [];
+      const webCount = leads.filter(l => l.leadSource === 'WEBSITE').length + tutors.filter(t => t.leadSource === 'WEBSITE' || t.platform === 'website').length;
       const waCount = leads.filter(l => l.leadSource === 'WHATSAPP').length;
       const fbCount = leads.filter(l => l.leadSource === 'FACEBOOK').length + tutors.filter(t => t.leadSource === 'FACEBOOK' || t.platform === 'fb').length;
       const igCount = leads.filter(l => l.leadSource === 'INSTAGRAM').length + tutors.filter(t => t.leadSource === 'INSTAGRAM' || t.platform === 'ig').length;
       const excelCount = tutors.filter(t => t.leadSource === 'EXCEL_IMPORT').length + students.filter(s => s.leadSource === 'EXCEL_IMPORT').length;
       const manualCount = leads.filter(l => l.leadSource === 'MANUAL_ENTRY').length;
-      const total = waCount + fbCount + igCount + excelCount + manualCount;
+      const total = webCount + waCount + fbCount + igCount + excelCount + manualCount;
 
       return [
+        { source: 'Website Portal', count: webCount, color: '#F5A623', key: 'WEBSITE', icon: 'website' },
         { source: 'WhatsApp', count: waCount, color: '#25D366', key: 'WHATSAPP', icon: 'whatsapp' },
         { source: 'Facebook Lead Ads', count: fbCount, color: '#1877F2', key: 'FACEBOOK', icon: 'facebook' },
         { source: 'Instagram Messages', count: igCount, color: '#E1306C', key: 'INSTAGRAM', icon: 'instagram' },
@@ -488,7 +603,7 @@ app.get('/api/stats', (req, res) => {
 
 // Tutors List & Filters
 app.get('/api/tutors', (req, res) => {
-  let list = [...(db.tutors || [])];
+  let list = (db.tutors || []).filter(t => t.isDeleted !== true);
   const { search, priority, status, subject, location, qualification, minExp, maxExp, platform, homeTuition } = req.query;
 
   if (search) {
@@ -628,6 +743,380 @@ app.post('/api/tutors/:id/priority', handleUpdatePriority);
 app.post('/api/tutors/:id/assign-priority', handleUpdatePriority);
 app.post('/api/tutors/:id/priority-override', handleUpdatePriority);
 
+
+// =========================================================================
+// VALIDATE TUTORS API & EXCEL BULK IMPORT
+// =========================================================================
+
+// GET /api/tutors/validate - List tutors in the Validate Tutor stage
+app.get('/api/tutors/validate', (req, res) => {
+  if (!db.tutors) db.tutors = [];
+
+  // Tutors in the VALIDATE TUTOR stage:
+  // Not soft-deleted AND not yet validated (and not in later stages like appointment)
+  let list = db.tutors.filter(t => 
+    t.isDeleted !== true &&
+    t.isValidated !== true &&
+    t.is_validated !== true &&
+    t.status !== 'VALIDATED' &&
+    t.status !== 'DOCUMENT_VERIFICATION' &&
+    t.status !== 'TUTOR_APPOINTED' &&
+    t.currentStage !== 'DOCUMENT_VERIFICATION'
+  );
+
+  const { search, priority, subject, experience, homeTuition, location, page = 1, limit = 20 } = req.query;
+
+  if (search) {
+    const q = search.toLowerCase().trim();
+    list = list.filter(t =>
+      (t.fullName && t.fullName.toLowerCase().includes(q)) ||
+      (t.tutorId && t.tutorId.toLowerCase().includes(q)) ||
+      (t.externalLeadId && t.externalLeadId.toLowerCase().includes(q)) ||
+      (t.email && t.email.toLowerCase().includes(q)) ||
+      (t.mobile && t.mobile.includes(q)) ||
+      (t.phone && t.phone.includes(q)) ||
+      (t.subjects && t.subjects.some(s => s.toLowerCase().includes(q))) ||
+      (t.subjectsText && t.subjectsText.toLowerCase().includes(q)) ||
+      (t.preferredLocation && t.preferredLocation.toLowerCase().includes(q))
+    );
+  }
+
+  if (priority && priority !== 'ALL') {
+    const pTarget = priority.toUpperCase().replace(/\s+/g, '_');
+    list = list.filter(t => {
+      const p = (t.priorityLevel || t.priority || '').toUpperCase().replace(/\s+/g, '_');
+      if (pTarget === 'NOT_ASSIGNED') {
+        return !p || p === 'NOT_ASSIGNED';
+      }
+      return p.includes(pTarget) || pTarget.includes(p);
+    });
+  }
+
+  if (subject && subject !== 'ALL') {
+    const sQuery = subject.toLowerCase().trim();
+    list = list.filter(t =>
+      (t.subjects && t.subjects.some(s => s.toLowerCase().includes(sQuery))) ||
+      (t.subjectsText && t.subjectsText.toLowerCase().includes(sQuery))
+    );
+  }
+
+  if (experience && experience !== 'ALL') {
+    list = list.filter(t => {
+      const yrs = t.experienceYears !== undefined ? t.experienceYears : 0;
+      if (experience === '0-1') return yrs >= 0 && yrs <= 1;
+      if (experience === '1-3') return yrs >= 1 && yrs <= 3;
+      if (experience === '3-5') return yrs >= 3 && yrs <= 5;
+      if (experience === '5+') return yrs >= 5;
+      return true;
+    });
+  }
+
+  if (homeTuition && homeTuition !== 'ALL') {
+    const htTarget = homeTuition.toLowerCase();
+    list = list.filter(t => (t.homeTuitionAvailable || '').toLowerCase() === htTarget);
+  }
+
+  if (location && location !== 'ALL') {
+    const locQuery = location.toLowerCase().trim();
+    list = list.filter(t => (t.preferredLocation || '').toLowerCase().includes(locQuery));
+  }
+
+  const total = list.length;
+  const p = Math.max(1, parseInt(page, 10) || 1);
+  const l = Math.max(1, parseInt(limit, 10) || 20);
+  const totalPages = Math.ceil(total / l) || 1;
+  const startIndex = (p - 1) * l;
+  const paginated = list.slice(startIndex, startIndex + l);
+
+  res.json({
+    success: true,
+    tutors: paginated,
+    total,
+    page: p,
+    limit: l,
+    totalPages
+  });
+});
+
+// POST /api/tutors/import - Excel Bulk Import into Validate Tutor stage
+app.post('/api/tutors/import', (req, res) => {
+  const { rows, commit = true } = req.body;
+
+  if (!rows || !Array.isArray(rows)) {
+    return res.status(400).json({ error: 'Invalid data format. Expected an array of rows.' });
+  }
+
+  const validRecords = [];
+  const duplicateRecords = [];
+  const invalidRecords = [];
+  const errors = [];
+
+  // Lookup maps for duplicate checking against active tutors in database
+  const activeTutors = (db.tutors || []).filter(t => t.isDeleted !== true);
+  const existingExternalIds = new Map();
+  const existingPhones = new Map();
+  const existingEmails = new Map();
+
+  activeTutors.forEach(t => {
+    if (t.externalLeadId) existingExternalIds.set(t.externalLeadId.toString().trim(), t);
+    const p1 = cleanPhone(t.mobile);
+    const p2 = cleanPhone(t.phone);
+    const p3 = cleanPhone(t.whatsappPhoneNumber);
+    if (p1) existingPhones.set(p1, t);
+    if (p2) existingPhones.set(p2, t);
+    if (p3) existingPhones.set(p3, t);
+    if (t.email) existingEmails.set(t.email.toLowerCase().trim(), t);
+  });
+
+  // Tracking within batch to prevent intra-batch duplicates
+  const batchExternalIds = new Set();
+  const batchPhones = new Set();
+  const batchEmails = new Set();
+
+  rows.forEach((row, idx) => {
+    const rowNum = idx + 1;
+    const rowErrors = [];
+
+    const externalId = (getFieldVal(row, ['id', 'external id', 'external_id', 'lead id', 'lead_id']) || '').toString().trim();
+    const fullName = getFieldVal(row, ['full name', 'fullname', 'full_name', 'name', 'tutor name', 'teacher name']);
+    const rawPhone = getFieldVal(row, ['phone number', 'phone_number', 'phonenumber', 'mobile', 'mobile number', 'phone', 'contact']);
+    const cleanedPhone = cleanPhone(rawPhone);
+    const rawEmail = getFieldVal(row, ['email', 'email address', 'email_address', 'e-mail']);
+    const email = (rawEmail || '').toLowerCase().trim();
+    
+    const subjectsStr = getFieldVal(row, ['subjects', 'which subjects can you teach', 'which_subjects_can_you_teach?', 'subject']);
+    const expStr = getFieldVal(row, ['experience', 'how much teaching experience do you have', 'how_much_teaching_experience_do_you_have?', 'teaching experience', 'experience years']);
+    const qualification = getFieldVal(row, ['qualification', 'degree', 'education']) || 'Not Provided';
+    const location = getFieldVal(row, ['location', 'preferred location', 'city', 'area']) || 'Not Provided';
+    const availableDays = getFieldVal(row, ['available days', 'available_days', 'days']) || 'Not Provided';
+    const availableTiming = getFieldVal(row, ['available timing', 'available_timing', 'timing', 'time']) || 'Flexible';
+    const expectedSalary = Number(getFieldVal(row, ['expected salary', 'expected_salary', 'salary', 'fees'])) || 0;
+    const homeTuitionStr = getFieldVal(row, ['home tuition', 'home_tuition', 'home tuition available', 'are you comfortable providing home tuition', 'are_you_comfortable_providing_home_tuition?']) || 'Yes';
+    const rawPriority = getFieldVal(row, ['priority', 'priority level']);
+    const notes = getFieldVal(row, ['notes', 'remarks', 'comments', 'instruction']) || '';
+
+    // Validations:
+    if (!fullName || fullName.trim().length === 0) {
+      rowErrors.push('Full Name is required');
+    }
+    if (!cleanedPhone || cleanedPhone.length < 7) {
+      rowErrors.push('Valid phone number is required (min 7 digits)');
+    }
+
+    // Duplicate Checking Priority:
+    // 1. External ID
+    // 2. Phone number
+    // 3. Email
+    let isDuplicate = false;
+    let duplicateReason = '';
+    let duplicateField = '';
+
+    if (externalId) {
+      if (existingExternalIds.has(externalId)) {
+        isDuplicate = true;
+        duplicateField = 'External ID';
+        duplicateReason = `External ID '${externalId}' already exists (matches ${existingExternalIds.get(externalId).fullName})`;
+      } else if (batchExternalIds.has(externalId)) {
+        isDuplicate = true;
+        duplicateField = 'External ID';
+        duplicateReason = `Duplicate External ID '${externalId}' within upload file`;
+      }
+    }
+
+    if (!isDuplicate && cleanedPhone) {
+      if (existingPhones.has(cleanedPhone)) {
+        isDuplicate = true;
+        duplicateField = 'Phone Number';
+        duplicateReason = `Phone Number '${cleanedPhone}' already registered (matches ${existingPhones.get(cleanedPhone).fullName})`;
+      } else if (batchPhones.has(cleanedPhone)) {
+        isDuplicate = true;
+        duplicateField = 'Phone Number';
+        duplicateReason = `Duplicate Phone Number '${cleanedPhone}' within upload file`;
+      }
+    }
+
+    if (!isDuplicate && email) {
+      if (existingEmails.has(email)) {
+        isDuplicate = true;
+        duplicateField = 'Email';
+        duplicateReason = `Email '${email}' already registered (matches ${existingEmails.get(email).fullName})`;
+      } else if (batchEmails.has(email)) {
+        isDuplicate = true;
+        duplicateField = 'Email';
+        duplicateReason = `Duplicate Email '${email}' within upload file`;
+      }
+    }
+
+    if (isDuplicate) {
+      duplicateRecords.push({
+        rowNum,
+        data: row,
+        fullName: fullName || 'Unnamed',
+        phone: rawPhone || cleanedPhone,
+        email,
+        reason: duplicateReason,
+        field: duplicateField
+      });
+      errors.push(`Row ${rowNum}: Skipped - Duplicate (${duplicateReason})`);
+    } else if (rowErrors.length > 0) {
+      invalidRecords.push({
+        rowNum,
+        data: row,
+        fullName: fullName || 'Unnamed',
+        phone: rawPhone || '',
+        email,
+        errors: rowErrors
+      });
+      errors.push(`Row ${rowNum}: Invalid (${rowErrors.join(', ')})`);
+    } else {
+      if (externalId) batchExternalIds.add(externalId);
+      if (cleanedPhone) batchPhones.add(cleanedPhone);
+      if (email) batchEmails.add(email);
+
+      // Parse experience years
+      let expYears = 0;
+      if (typeof expStr === 'number') {
+        expYears = expStr;
+      } else if (typeof expStr === 'string') {
+        const m = expStr.match(/\d+/);
+        if (m) expYears = parseInt(m[0], 10);
+      }
+
+      // Parse subjects array
+      let subjects = ['General Coaching'];
+      if (subjectsStr) {
+        subjects = subjectsStr.split(/[,;|]/).map(s => s.trim()).filter(Boolean);
+        if (subjects.length === 0) subjects = ['General Coaching'];
+      }
+
+      // Home tuition normalization
+      const homeTuitionNorm = ['yes', 'true', '1', 'y'].includes(homeTuitionStr.toString().toLowerCase().trim()) ? 'Yes' : 'No';
+
+      const validItem = {
+        rowNum,
+        externalLeadId: externalId || null,
+        fullName: fullName.trim(),
+        mobile: cleanedPhone,
+        phone: cleanedPhone,
+        email: email || 'Not Provided',
+        subjects,
+        subjectsText: subjects.join(', '),
+        experience: expStr || `${expYears} Years`,
+        experienceYears: expYears,
+        qualification,
+        preferredLocation: location,
+        availableDays,
+        availableTiming,
+        expectedSalary,
+        homeTuitionAvailable: homeTuitionNorm,
+        priority: sanitizePriority(rawPriority || 'NOT_ASSIGNED'),
+        notes,
+        leadSource: 'EXCEL_IMPORT',
+        platform: 'excel_bulk_import'
+      };
+
+      validRecords.push(validItem);
+    }
+  });
+
+  const summary = {
+    totalRows: rows.length,
+    valid: validRecords.length,
+    duplicates: duplicateRecords.length,
+    invalid: invalidRecords.length,
+    successfullyImported: 0,
+    skippedDuplicates: duplicateRecords.length,
+    invalidRows: invalidRecords.length
+  };
+
+  if (commit && validRecords.length > 0) {
+    const demand = priorityEngine.computeStudentDemand(db.students || []);
+    const now = new Date().toISOString();
+    let currentMaxNum = (db.tutors || []).reduce((max, t) => {
+      const match = (t.tutorId || '').match(/\d+/);
+      return match ? Math.max(max, parseInt(match[0], 10)) : max;
+    }, 0);
+
+    const newlyCreatedTutors = validRecords.map((item, idx) => {
+      currentMaxNum++;
+      const id = 'tut-imp-' + Date.now() + '-' + idx + '-' + Math.floor(Math.random() * 1000);
+      const tutorId = 'TUT-' + String(currentMaxNum).padStart(3, '0');
+
+      const tutor = {
+        id,
+        tutorId,
+        externalLeadId: item.externalLeadId,
+        fullName: item.fullName,
+        mobile: item.mobile,
+        phone: item.phone,
+        email: item.email,
+        qualification: item.qualification,
+        experience: item.experience,
+        experienceYears: item.experienceYears,
+        subjects: item.subjects,
+        subjectsText: item.subjectsText,
+        preferredLocation: item.preferredLocation,
+        availableDays: item.availableDays,
+        availableTiming: item.availableTiming,
+        expectedSalary: item.expectedSalary,
+        homeTuitionAvailable: item.homeTuitionAvailable,
+        notes: item.notes,
+        leadSource: 'EXCEL_IMPORT',
+        platform: 'excel_bulk_import',
+        status: 'NEW_APPLICATION',
+        currentStage: 'VALIDATE_TUTOR',
+        isValidated: false,
+        is_validated: false,
+        isDeleted: false,
+        createdAt: now,
+        updatedAt: now
+      };
+
+      // Automatic Priority Calculation
+      const calc = priorityEngine.calculateTutorPriority(tutor, demand, db.priorityConfig || priorityEngine.DEFAULT_WEIGHTS);
+      tutor.priorityScore = calc.priorityScore;
+      tutor.priorityLevel = calc.priorityLevel;
+      tutor.priority = calc.priorityLevel;
+      tutor.priorityBreakdown = calc.priorityBreakdown;
+      tutor.priorityExplanation = calc.priorityExplanation;
+      tutor.lowPriorityReasons = calc.lowPriorityReasons;
+      tutor.lastPriorityCalculatedAt = now;
+
+      // Seed standard tutor documents
+      const docTypes = ['Resume', 'Qualification Certificate', 'Address Proof'];
+      docTypes.forEach(dt => {
+        if (!db.tutorDocuments) db.tutorDocuments = [];
+        db.tutorDocuments.push({
+          id: 'doc-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+          tutorId: tutor.id,
+          docType: dt,
+          fileName: `${tutor.fullName.replace(/\s+/g, '_')}_${dt.replace(/\s+/g, '_')}.pdf`,
+          fileUrl: `/mock-files/${tutor.id}_${dt.toLowerCase().replace(/\s+/g, '_')}.pdf`,
+          status: 'Pending',
+          remarks: '',
+          updatedAt: now
+        });
+      });
+
+      addLog(tutor.id, 'Admin', 'EXCEL_IMPORTED', `Tutor profile imported via Excel. Placed in Validate Tutor stage with priority score ${tutor.priorityScore}/100.`);
+      return tutor;
+    });
+
+    db.tutors.push(...newlyCreatedTutors);
+    saveDB(db);
+    summary.successfullyImported = newlyCreatedTutors.length;
+  }
+
+  res.json({
+    success: true,
+    summary,
+    validRecords,
+    duplicateRecords,
+    invalidRecords,
+    errors
+  });
+});
+
 // Single Tutor Details
 app.get('/api/tutors/:id', (req, res) => {
   const tutor = db.tutors.find(t => t.id === req.params.id || t.tutorId === req.params.id);
@@ -708,20 +1197,159 @@ app.put('/api/tutors/:id', (req, res) => {
   if (index === -1) return res.status(404).json({ error: 'Tutor not found' });
 
   db.tutors[index] = { ...db.tutors[index], ...req.body, updatedAt: new Date().toISOString() };
+
+  // Recalculate priority if priority is automatic
+  if (db.tutors[index].prioritySource !== 'MANUAL') {
+    const demand = priorityEngine.computeStudentDemand(db.students || []);
+    const calc = priorityEngine.calculateTutorPriority(db.tutors[index], demand, db.priorityConfig || priorityEngine.DEFAULT_WEIGHTS);
+    db.tutors[index].priorityScore = calc.priorityScore;
+    db.tutors[index].priorityLevel = calc.priorityLevel;
+    db.tutors[index].priority = calc.priorityLevel;
+    db.tutors[index].priorityBreakdown = calc.priorityBreakdown;
+    db.tutors[index].lastPriorityCalculatedAt = new Date().toISOString();
+  }
+
   addLog(db.tutors[index].id, 'Admin', 'PROFILE_UPDATED', 'Tutor profile details updated.');
   saveDB(db);
   res.json(db.tutors[index]);
 });
 
-// Delete Tutor
-app.delete('/api/tutors/:id', (req, res) => {
-  const tutor = db.tutors.find(t => t.id === req.params.id);
-  if (!tutor) return res.status(404).json({ error: 'Tutor not found' });
+// Permanent Delete Tutor and all related child records with atomic transaction & rollback
+app.delete('/api/tutors/:id', requireRole(['ADMIN']), (req, res) => {
+  const tutor = (db.tutors || []).find(t => t.id === req.params.id || t.tutorId === req.params.id);
+  if (!tutor) {
+    return res.status(404).json({ success: false, message: 'Tutor not found' });
+  }
 
-  db.tutors = db.tutors.filter(t => t.id !== req.params.id);
-  db.tutorDocuments = db.tutorDocuments.filter(d => d.tutorId !== req.params.id);
-  saveDB(db);
-  res.json({ success: true, message: 'Tutor deleted successfully' });
+  const tutorId = tutor.id;
+  const altTutorId = tutor.tutorId;
+  const tutorMatches = (val) => val && (val === tutorId || (altTutorId && val === altTutorId));
+
+  // Snapshot database for atomic transaction rollback
+  const dbSnapshot = JSON.parse(JSON.stringify(db));
+
+  // Collect any server-uploaded files belonging strictly to this tutor for post-commit cleanup
+  const filesToDelete = [];
+  (db.tutorDailyUpdates || []).forEach(u => {
+    if (tutorMatches(u.tutorId)) {
+      const photoUrl = u.imageUrl || u.whiteboardPhotoUrl || u.photoUrl;
+      if (photoUrl && typeof photoUrl === 'string' && photoUrl.startsWith('/uploads/')) {
+        filesToDelete.push(path.join(__dirname, '..', photoUrl));
+      }
+    }
+  });
+
+  (db.tutorDocuments || []).forEach(d => {
+    if (tutorMatches(d.tutorId)) {
+      if (d.fileUrl && typeof d.fileUrl === 'string' && d.fileUrl.startsWith('/uploads/')) {
+        filesToDelete.push(path.join(__dirname, '..', d.fileUrl));
+      }
+    }
+  });
+
+  try {
+    // 1. Delete dependent/child records first
+    // Tutor-student assignment records
+    if (db.tutorStudentAssignments) {
+      db.tutorStudentAssignments = db.tutorStudentAssignments.filter(a => !tutorMatches(a.tutorId));
+    }
+
+    // Tutor daily teaching updates
+    if (db.tutorDailyUpdates) {
+      db.tutorDailyUpdates = db.tutorDailyUpdates.filter(u => !tutorMatches(u.tutorId));
+    }
+
+    // Appointments
+    if (db.appointments) {
+      db.appointments = db.appointments.filter(ap => !tutorMatches(ap.tutorId));
+    }
+
+    // Parent approvals
+    if (db.parentApprovals) {
+      db.parentApprovals = db.parentApprovals.filter(pa => !tutorMatches(pa.tutorId));
+    }
+
+    // Demo classes
+    if (db.demoClasses) {
+      db.demoClasses = db.demoClasses.filter(dc => !tutorMatches(dc.tutorId));
+    }
+
+    // Interviews
+    if (db.interviews) {
+      db.interviews = db.interviews.filter(iv => !tutorMatches(iv.tutorId));
+    }
+
+    // Tutor verification documents
+    if (db.tutorDocuments) {
+      db.tutorDocuments = db.tutorDocuments.filter(d => !tutorMatches(d.tutorId));
+    }
+
+    // WhatsApp messages & history
+    if (db.whatsAppMessages) {
+      db.whatsAppMessages = db.whatsAppMessages.filter(m => !tutorMatches(m.tutorId));
+    }
+    if (db.whatsAppContacts) {
+      db.whatsAppContacts = db.whatsAppContacts.filter(c => !tutorMatches(c.tutorId));
+    }
+    if (db.whatsappHistory) {
+      db.whatsappHistory = db.whatsappHistory.filter(h => !tutorMatches(h.tutorId));
+    }
+    if (db.whatsAppApiLogs) {
+      db.whatsAppApiLogs = db.whatsAppApiLogs.filter(l => !tutorMatches(l.tutorId));
+    }
+
+    // Activity logs & notifications
+    if (db.activityLogs) {
+      db.activityLogs = db.activityLogs.filter(al => !tutorMatches(al.tutorId));
+    }
+    if (db.notifications) {
+      db.notifications = db.notifications.filter(n => !(n.link && (n.link.includes(tutorId) || (altTutorId && n.link.includes(altTutorId)))));
+    }
+
+    // 2. Student Safety: unassign students, KEEP student records intact
+    if (db.students) {
+      db.students.forEach(s => {
+        if (tutorMatches(s.assignedTutorId)) {
+          s.assignedTutorId = null;
+          if (s.status === 'TUTOR_ASSIGNED' || s.status === 'PENDING_MATCH') {
+            s.status = 'LOOKING_FOR_TUTOR';
+          }
+        }
+      });
+    }
+
+    // 3. Delete tutor record itself (permanently removing profile & auth record)
+    db.tutors = (db.tutors || []).filter(t => t.id !== tutorId && t.tutorId !== altTutorId);
+
+    // Commit Transaction: recalculate priorities and persist to disk
+    triggerPriorityRecalculation();
+    saveDB(db);
+
+    // 4. File Cleanup: only after database transaction successfully committed
+    filesToDelete.forEach(filePath => {
+      try {
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      } catch (fileErr) {
+        console.warn('Failed to clean up tutor file:', filePath, fileErr.message);
+      }
+    });
+
+    return res.json({
+      success: true,
+      message: 'Tutor and all related details deleted permanently.'
+    });
+  } catch (err) {
+    // Transaction Rollback: restore previous database snapshot
+    db = dbSnapshot;
+    saveDB(db);
+    console.error('Error in permanent tutor deletion (rolled back):', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to delete tutor. No data was removed.'
+    });
+  }
 });
 
 // Validate Tutor (Applicable to both High Priority & Low Priority)
@@ -832,96 +1460,171 @@ app.get('/api/interviews', (req, res) => {
   res.json({ interviews: interviewsWithDetails });
 });
 
-// Submit interview evaluation
+// Submit interview evaluation (Atomic Transaction with Rollback)
 app.put('/api/interviews/:id', (req, res) => {
-  const interview = (db.interviews || []).find(i => i.id === req.params.id || i.interviewId === req.params.id);
-  if (!interview) return res.status(404).json({ error: 'Interview not found' });
-
-  const tutor = db.tutors.find(t => t.id === interview.tutorId);
-  const { communicationRating, subjectKnowledgeRating, teachingAbilityRating, overallRating, result, comments, interviewer } = req.body;
-
-  if (communicationRating !== undefined) interview.communicationRating = Number(communicationRating);
-  if (subjectKnowledgeRating !== undefined) interview.subjectKnowledgeRating = Number(subjectKnowledgeRating);
-  if (teachingAbilityRating !== undefined) interview.teachingAbilityRating = Number(teachingAbilityRating);
-  if (overallRating !== undefined) interview.overallRating = Number(overallRating);
-  if (result !== undefined) interview.result = result;
-  if (comments !== undefined) interview.comments = comments;
-  if (interviewer) interview.interviewer = interviewer;
-
-  let demo = null;
-  const isSelected = result === 'Selected' || result === 'SELECTED';
-  const isRejected = result === 'Rejected' || result === 'REJECTED';
-  const isOnHold = result === 'On Hold' || result === 'ON_HOLD' || result === 'OnHold';
-
-  if (isSelected) {
-    interview.result = 'Selected';
-    interview.interviewResult = 'SELECTED';
-    interview.status = 'INTERVIEW_SELECTED';
-
-    if (tutor) {
-      tutor.status = 'DEMO_CLASS_SCHEDULED';
-
-      // Create DemoClass record if one does not exist
-      demo = (db.demoClasses || []).find(d => d.tutorId === tutor.id);
-      if (!demo) {
-        demo = {
-          id: 'dem-' + Date.now(),
-          demoId: 'DEM-2026-' + ((db.demoClasses ? db.demoClasses.length : 0) + 1).toString().padStart(3, '0'),
-          tutorId: tutor.id,
-          studentId: null,
-          subject: (tutor.subjects && tutor.subjects.length > 0) ? tutor.subjects[0] : null,
-          class: null,
-          demoDate: null,
-          demoTime: null,
-          date: null,
-          time: null,
-          location: tutor.preferredLocation || null,
-          teachingMethod: null,
-          adminRating: 0,
-          studentRating: 0,
-          parentRating: 0,
-          status: 'PENDING',
-          result: 'Pending',
-          comments: 'Demo class pending scheduling.',
-          createdAt: new Date().toISOString()
-        };
-        if (!db.demoClasses) db.demoClasses = [];
-        db.demoClasses.push(demo);
-      } else if (demo.status !== 'SCHEDULED' && demo.status !== 'COMPLETED') {
-        demo.status = 'PENDING';
-        demo.result = 'Pending';
-      }
-
-      addLog(tutor.id, 'Interviewer', 'INTERVIEW_SELECTED', 'Interview selected. Tutor moved to Demo Class process.');
-      addNotification('Interview Selected', 'Interview selected successfully. Tutor ' + tutor.fullName + ' moved to Demo Class.', 'success', '/recruitment/demo-classes');
-    }
-  } else if (isRejected) {
-    interview.result = 'Rejected';
-    interview.interviewResult = 'REJECTED';
-    interview.status = 'INTERVIEW_REJECTED';
-    if (tutor) {
-      tutor.status = 'INTERVIEW_REJECTED';
-      addLog(tutor.id, 'Interviewer', 'INTERVIEW_REJECTED', 'Interview rejected. Comments: ' + (comments || 'Did not meet criteria.'));
-      addNotification('Interview Result', tutor.fullName + ' was rejected in the interview round.', 'danger', '/recruitment/interview');
-    }
-  } else if (isOnHold) {
-    interview.result = 'On Hold';
-    interview.interviewResult = 'ON_HOLD';
-    interview.status = 'INTERVIEW_ON_HOLD';
-    if (tutor) {
-      tutor.status = 'INTERVIEW_ON_HOLD';
-      addLog(tutor.id, 'Interviewer', 'INTERVIEW_ON_HOLD', 'Interview placed on hold. Comments: ' + (comments || 'Under review.'));
-      addNotification('Interview Result', tutor.fullName + ' placed on hold after interview.', 'warning', '/recruitment/interview');
+  let interview = (db.interviews || []).find(i => i.id === req.params.id || i.interviewId === req.params.id);
+  if (!interview && (req.body.tutorId || req.params.id.startsWith('int-'))) {
+    const tutorId = req.body.tutorId || req.params.id.replace('int-', '');
+    const t = (db.tutors || []).find(item => item.id === tutorId || item.tutorId === tutorId);
+    if (t) {
+      interview = {
+        id: req.params.id.startsWith('int-') ? req.params.id : 'int-' + t.id,
+        interviewId: 'INT-2026-' + ((db.interviews ? db.interviews.length : 0) + 1).toString().padStart(3, '0'),
+        tutorId: t.id,
+        date: req.body.date || new Date().toISOString().split('T')[0],
+        time: req.body.time || '11:00 AM',
+        interviewer: req.body.interviewer || 'Academic Panel Lead',
+        type: req.body.type || 'Online',
+        communicationRating: 0,
+        subjectKnowledgeRating: 0,
+        teachingAbilityRating: 0,
+        overallRating: 0,
+        result: 'Pending',
+        comments: ''
+      };
+      if (!db.interviews) db.interviews = [];
+      db.interviews.push(interview);
     }
   }
 
-  saveDB(db);
-  res.json({ success: true, interview, tutor, demo });
+  if (!interview) return res.status(404).json({ success: false, message: 'Interview not found' });
+
+  // Take atomic transaction snapshot
+  const dbSnapshot = JSON.stringify(db);
+
+  try {
+    const tutor = (db.tutors || []).find(t => t.id === interview.tutorId);
+    const { communicationRating, subjectKnowledgeRating, teachingAbilityRating, overallRating, result, comments, interviewer } = req.body;
+
+    if (communicationRating !== undefined) interview.communicationRating = Number(communicationRating);
+    if (subjectKnowledgeRating !== undefined) interview.subjectKnowledgeRating = Number(subjectKnowledgeRating);
+    if (teachingAbilityRating !== undefined) interview.teachingAbilityRating = Number(teachingAbilityRating);
+    if (overallRating !== undefined) interview.overallRating = Number(overallRating);
+    if (comments !== undefined) interview.comments = comments;
+    if (interviewer) interview.interviewer = interviewer;
+
+    const isSelected = result === 'SELECTED' || result === 'Selected';
+    const isFailed = result === 'FAILED' || result === 'Failed' || result === 'REJECTED' || result === 'Rejected';
+    const isOnHold = result === 'ON_HOLD' || result === 'On Hold' || result === 'OnHold';
+
+    let demo = null;
+
+    if (isSelected) {
+      interview.result = 'SELECTED';
+      interview.interviewResult = 'SELECTED';
+      interview.status = 'INTERVIEW_SELECTED';
+
+      if (tutor) {
+        tutor.status = 'INTERVIEW_SELECTED';
+        tutor.interviewResult = 'SELECTED';
+
+        // Check if tutor already has an existing Demo Class record (prevent duplicates)
+        demo = (db.demoClasses || []).find(d => d.tutorId === tutor.id);
+        if (!demo) {
+          demo = {
+            id: 'dem-' + Date.now(),
+            demoId: 'DEM-2026-' + ((db.demoClasses ? db.demoClasses.length : 0) + 1).toString().padStart(3, '0'),
+            tutorId: tutor.id,
+            studentId: null,
+            subject: (tutor.subjects && tutor.subjects.length > 0) ? tutor.subjects[0] : null,
+            class: null,
+            demoDate: null,
+            demoTime: null,
+            date: null,
+            time: null,
+            location: tutor.preferredLocation || null,
+            teachingMethod: null,
+            adminRating: 0,
+            studentRating: 0,
+            parentRating: 0,
+            status: 'DEMO_CLASS_PENDING',
+            result: 'Pending',
+            comments: 'Demo class pending scheduling.',
+            createdAt: new Date().toISOString()
+          };
+          if (!db.demoClasses) db.demoClasses = [];
+          db.demoClasses.push(demo);
+        } else {
+          // Update existing pending record
+          if (demo.status !== 'DEMO_CLASS_SCHEDULED' && demo.status !== 'SCHEDULED' && demo.status !== 'DEMO_CLASS_COMPLETED' && demo.status !== 'COMPLETED') {
+            demo.status = 'DEMO_CLASS_PENDING';
+            demo.result = 'Pending';
+          }
+        }
+
+        addLog(tutor.id, 'Interviewer', 'INTERVIEW_SELECTED', 'Interview result: SELECTED. Tutor moved to Demo Class.');
+        addNotification('Interview Selected', 'Interview result saved as SELECTED. Tutor ' + tutor.fullName + ' moved to Demo Class.', 'success', '/recruitment/demo-classes');
+      }
+    } else if (isFailed) {
+      interview.result = 'FAILED';
+      interview.interviewResult = 'FAILED';
+      interview.status = 'INTERVIEW_FAILED';
+
+      if (tutor) {
+        tutor.status = 'INTERVIEW_FAILED';
+        tutor.interviewResult = 'FAILED';
+
+        // Requirement 2 & 8: Ensure NO active Demo Class record for this failed tutor
+        if (db.demoClasses) {
+          db.demoClasses = db.demoClasses.filter(d => d.tutorId !== tutor.id);
+        }
+
+        addLog(tutor.id, 'Interviewer', 'INTERVIEW_FAILED', 'Interview result: FAILED. ' + (comments || 'Did not meet criteria.'));
+        addNotification('Interview Result', tutor.fullName + ' failed the interview round.', 'danger', '/recruitment/interview');
+      }
+    } else if (isOnHold) {
+      interview.result = 'ON_HOLD';
+      interview.interviewResult = 'ON_HOLD';
+      interview.status = 'INTERVIEW_ON_HOLD';
+
+      if (tutor) {
+        tutor.status = 'INTERVIEW_ON_HOLD';
+        tutor.interviewResult = 'ON_HOLD';
+
+        // Requirement 3: Ensure NO active Demo Class record for on-hold tutor
+        if (db.demoClasses) {
+          db.demoClasses = db.demoClasses.filter(d => d.tutorId !== tutor.id);
+        }
+
+        addLog(tutor.id, 'Interviewer', 'INTERVIEW_ON_HOLD', 'Interview placed on hold. Comments: ' + (comments || 'Under review.'));
+        addNotification('Interview Result', tutor.fullName + ' placed on hold after interview.', 'warning', '/recruitment/interview');
+      }
+    } else {
+      interview.result = result || 'Pending';
+    }
+
+    saveDB(db);
+    return res.json({
+      success: true,
+      message: isSelected ? 'Interview selected. Tutor moved to Demo Class.' : isFailed ? 'Interview result saved as FAILED. Tutor kept in Interview Failed.' : 'Interview placed on hold.',
+      interview,
+      tutor,
+      demo
+    });
+  } catch (err) {
+    // Rollback atomic transaction
+    db = normalizeDatabase(JSON.parse(dbSnapshot));
+    console.error('Error in interview evaluation, rolled back:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to update interview evaluation. No changes were made.',
+      error: err.message
+    });
+  }
 });
 
 // Get all demo classes with linked tutor and student details
 app.get('/api/demos', (req, res) => {
-  const demosWithDetails = (db.demoClasses || []).map(demo => {
+  // Requirement 9: Demo Classes page must only display tutors who are not failed in interview
+  const validDemos = (db.demoClasses || []).filter(demo => {
+    const tutor = (db.tutors || []).find(t => t.id === demo.tutorId);
+    const interview = (db.interviews || []).find(i => i.tutorId === demo.tutorId);
+    if (tutor && (tutor.status === 'INTERVIEW_FAILED' || tutor.interviewResult === 'FAILED')) return false;
+    if (interview && (interview.result === 'FAILED' || interview.interviewResult === 'FAILED' || interview.result === 'Rejected')) return false;
+    return true;
+  });
+
+  const demosWithDetails = validDemos.map(demo => {
     const tutor = db.tutors.find(t => t.id === demo.tutorId);
     const student = db.students.find(s => s.id === demo.studentId);
     const interview = (db.interviews || []).find(i => i.tutorId === demo.tutorId);
@@ -935,18 +1638,41 @@ app.get('/api/demos', (req, res) => {
   res.json({ demoClasses: demosWithDetails });
 });
 
-// Move tutor to Demo Class (standalone trigger)
+// Move tutor to Demo Class (standalone trigger with strict validation)
 app.post('/api/tutors/:id/move-to-demo', (req, res) => {
-  const tutor = db.tutors.find(t => t.id === req.params.id);
-  if (!tutor) return res.status(404).json({ error: 'Tutor not found' });
+  const tutor = (db.tutors || []).find(t => t.id === req.params.id || t.tutorId === req.params.id);
+  if (!tutor) return res.status(404).json({ success: false, message: 'Tutor not found' });
 
   const interview = (db.interviews || []).find(i => i.tutorId === tutor.id);
-  if (!interview || (interview.result !== 'Selected' && interview.interviewResult !== 'SELECTED')) {
-    return res.status(400).json({ error: 'Tutor must pass interview with result Selected before Demo Class.' });
+
+  // Requirement 5: If the interview result is FAILED, reject Demo Class creation
+  if (
+    tutor.status === 'INTERVIEW_FAILED' ||
+    tutor.interviewResult === 'FAILED' ||
+    (interview && (interview.result === 'FAILED' || interview.interviewResult === 'FAILED' || interview.result === 'Rejected'))
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: 'Failed interview tutors cannot be moved to Demo Classes.'
+    });
   }
 
-  tutor.status = 'DEMO_CLASS_SCHEDULED';
+  const isSelected =
+    tutor.status === 'INTERVIEW_SELECTED' ||
+    tutor.interviewResult === 'SELECTED' ||
+    (interview && (interview.result === 'SELECTED' || interview.interviewResult === 'SELECTED' || interview.result === 'Selected'));
 
+  if (!isSelected) {
+    return res.status(400).json({
+      success: false,
+      message: 'Failed interview tutors cannot be moved to Demo Classes.'
+    });
+  }
+
+  tutor.status = 'INTERVIEW_SELECTED';
+  tutor.interviewResult = 'SELECTED';
+
+  // Requirement 10: Prevent duplicate Demo Classes
   let demo = (db.demoClasses || []).find(d => d.tutorId === tutor.id);
   if (!demo) {
     demo = {
@@ -965,7 +1691,7 @@ app.post('/api/tutors/:id/move-to-demo', (req, res) => {
       adminRating: 0,
       studentRating: 0,
       parentRating: 0,
-      status: (req.body.date && req.body.studentId) ? 'SCHEDULED' : 'PENDING',
+      status: (req.body.date && req.body.studentId) ? 'DEMO_CLASS_SCHEDULED' : 'DEMO_CLASS_PENDING',
       result: 'Pending',
       comments: req.body.comments || 'Demo class created',
       createdAt: new Date().toISOString()
@@ -986,7 +1712,9 @@ app.post('/api/tutors/:id/move-to-demo', (req, res) => {
     }
     if (req.body.location) demo.location = req.body.location;
     if (demo.date && demo.studentId) {
-      demo.status = 'SCHEDULED';
+      demo.status = 'DEMO_CLASS_SCHEDULED';
+    } else if (demo.status !== 'DEMO_CLASS_SCHEDULED' && demo.status !== 'DEMO_CLASS_COMPLETED' && demo.status !== 'COMPLETED') {
+      demo.status = 'DEMO_CLASS_PENDING';
     }
   }
 
@@ -997,10 +1725,98 @@ app.post('/api/tutors/:id/move-to-demo', (req, res) => {
   res.json({ success: true, tutor, demo });
 });
 
+// Create demo class directly (with strict validation against FAILED interview tutors)
+app.post('/api/demos', (req, res) => {
+  const tutorId = req.body.tutorId;
+  if (!tutorId) return res.status(400).json({ success: false, message: 'tutorId is required' });
+
+  const tutor = (db.tutors || []).find(t => t.id === tutorId || t.tutorId === tutorId);
+  if (!tutor) return res.status(404).json({ success: false, message: 'Tutor not found' });
+
+  const interview = (db.interviews || []).find(i => i.tutorId === tutor.id);
+
+  // Requirement 5: Check if FAILED
+  if (
+    tutor.status === 'INTERVIEW_FAILED' ||
+    tutor.interviewResult === 'FAILED' ||
+    (interview && (interview.result === 'FAILED' || interview.interviewResult === 'FAILED' || interview.result === 'Rejected'))
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: 'Failed interview tutors cannot be moved to Demo Classes.'
+    });
+  }
+
+  // Check if SELECTED
+  const isSelected =
+    tutor.status === 'INTERVIEW_SELECTED' ||
+    tutor.interviewResult === 'SELECTED' ||
+    (interview && (interview.result === 'SELECTED' || interview.interviewResult === 'SELECTED' || interview.result === 'Selected'));
+
+  if (!isSelected) {
+    return res.status(400).json({
+      success: false,
+      message: 'Failed interview tutors cannot be moved to Demo Classes.'
+    });
+  }
+
+  tutor.status = 'INTERVIEW_SELECTED';
+  tutor.interviewResult = 'SELECTED';
+
+  // Prevent duplicates
+  let demo = (db.demoClasses || []).find(d => d.tutorId === tutor.id);
+  if (!demo) {
+    demo = {
+      id: 'dem-' + Date.now(),
+      demoId: 'DEM-2026-' + ((db.demoClasses ? db.demoClasses.length : 0) + 1).toString().padStart(3, '0'),
+      tutorId: tutor.id,
+      studentId: req.body.studentId || null,
+      subject: req.body.subject || (tutor.subjects && tutor.subjects[0]) || null,
+      class: req.body.class || null,
+      date: req.body.date || req.body.demoDate || null,
+      demoDate: req.body.date || req.body.demoDate || null,
+      time: req.body.time || req.body.demoTime || null,
+      demoTime: req.body.time || req.body.demoTime || null,
+      location: req.body.location || tutor.preferredLocation || null,
+      teachingMethod: req.body.teachingMethod || null,
+      adminRating: 0,
+      studentRating: 0,
+      parentRating: 0,
+      status: (req.body.date && req.body.studentId) ? 'DEMO_CLASS_SCHEDULED' : 'DEMO_CLASS_PENDING',
+      result: 'Pending',
+      comments: req.body.comments || 'Demo class created',
+      createdAt: new Date().toISOString()
+    };
+    if (!db.demoClasses) db.demoClasses = [];
+    db.demoClasses.push(demo);
+  } else {
+    if (req.body.studentId) demo.studentId = req.body.studentId;
+    if (req.body.subject) demo.subject = req.body.subject;
+    if (req.body.class) demo.class = req.body.class;
+    if (req.body.date) {
+      demo.date = req.body.date;
+      demo.demoDate = req.body.date;
+    }
+    if (req.body.time) {
+      demo.time = req.body.time;
+      demo.demoTime = req.body.time;
+    }
+    if (req.body.location) demo.location = req.body.location;
+    if (demo.date && demo.studentId) {
+      demo.status = 'DEMO_CLASS_SCHEDULED';
+    } else if (demo.status !== 'DEMO_CLASS_SCHEDULED' && demo.status !== 'DEMO_CLASS_COMPLETED' && demo.status !== 'COMPLETED') {
+      demo.status = 'DEMO_CLASS_PENDING';
+    }
+  }
+
+  saveDB(db);
+  res.json({ success: true, tutor, demo });
+});
+
 // Schedule an existing demo class
 app.put('/api/demos/:id/schedule', (req, res) => {
   const demo = (db.demoClasses || []).find(d => d.id === req.params.id || d.demoId === req.params.id);
-  if (!demo) return res.status(404).json({ error: 'Demo class not found' });
+  if (!demo) return res.status(404).json({ success: false, message: 'Demo class not found' });
 
   const tutor = db.tutors.find(t => t.id === demo.tutorId);
   const { studentId, subject, class: studentClass, date, time, location, comments, teachingMethod } = req.body;
@@ -1020,7 +1836,7 @@ app.put('/api/demos/:id/schedule', (req, res) => {
   if (comments) demo.comments = comments;
   if (teachingMethod) demo.teachingMethod = teachingMethod;
 
-  demo.status = 'SCHEDULED';
+  demo.status = 'DEMO_CLASS_SCHEDULED';
   demo.result = 'Pending';
   if (tutor) tutor.status = 'DEMO_CLASS_SCHEDULED';
 
@@ -1039,7 +1855,7 @@ app.put('/api/demos/:id/schedule', (req, res) => {
 // Submit demo class evaluation
 app.put('/api/demos/:id', (req, res) => {
   const demo = (db.demoClasses || []).find(d => d.id === req.params.id || d.demoId === req.params.id);
-  if (!demo) return res.status(404).json({ error: 'Demo class not found' });
+  if (!demo) return res.status(404).json({ success: false, message: 'Demo class not found' });
 
   const tutor = db.tutors.find(t => t.id === demo.tutorId);
   const student = db.students.find(s => s.id === demo.studentId);
@@ -1052,9 +1868,9 @@ app.put('/api/demos/:id', (req, res) => {
   if (comments !== undefined) demo.comments = comments;
   if (teachingMethod) demo.teachingMethod = teachingMethod;
 
-  if (result === 'Passed' || result === 'PASSED') {
+  if (result === 'Passed' || result === 'PASSED' || result === 'DEMO_CLASS_PASSED') {
     demo.result = 'Passed';
-    demo.status = 'COMPLETED';
+    demo.status = 'DEMO_CLASS_PASSED';
     if (tutor) {
       tutor.status = 'DEMO_CLASS_PASSED';
       addLog(tutor.id, 'Academic Lead', 'DEMO_PASSED', 'Demo class passed with student rating ' + demo.studentRating + '/5.');
@@ -1081,9 +1897,9 @@ app.put('/api/demos/:id', (req, res) => {
       
       addNotification('Parent Approval Pending', 'Demo passed for ' + tutor.fullName + '. Parent approval requested.', 'warning', '/recruitment/parent-approval');
     }
-  } else if (result === 'Failed' || result === 'FAILED') {
+  } else if (result === 'Failed' || result === 'FAILED' || result === 'DEMO_CLASS_FAILED') {
     demo.result = 'Failed';
-    demo.status = 'COMPLETED';
+    demo.status = 'DEMO_CLASS_FAILED';
     if (tutor) {
       tutor.status = 'DEMO_CLASS_FAILED';
       addLog(tutor.id, 'Academic Lead', 'DEMO_FAILED', 'Demo class failed. Feedback: ' + comments);
@@ -1250,6 +2066,345 @@ app.post('/api/appointments', (req, res) => {
 });
 
 // Students CRUD
+
+// =========================================================================
+// TUTOR-STUDENT ASSIGNMENTS API (Add New Student to Appointed Tutor)
+// =========================================================================
+
+function enrichAssignment(assignment) {
+  const tutor = (db.tutors || []).find(t => t.id === assignment.tutorId);
+  const student = (db.students || []).find(s => s.id === assignment.studentId);
+  return {
+    ...assignment,
+    tutor: tutor || null,
+    student: student || null,
+    tutorName: tutor ? tutor.fullName : 'Appointed Tutor',
+    tutorPhone: tutor ? (tutor.whatsappPhoneNumber || tutor.mobile || tutor.phone) : '—',
+    tutorSubjects: tutor ? tutor.subjects : [],
+    tutorLocation: tutor ? tutor.preferredLocation : '—',
+    studentName: student ? student.studentName : 'Assigned Student',
+    studentPhone: student ? (student.phone || student.parentPhone) : '—',
+    studentClass: student ? student.class : assignment.class,
+    studentLocation: student ? student.location : assignment.location,
+    parentPhone: student ? student.parentPhone : '—'
+  };
+}
+
+// 1. Get All Tutor-Student Assignments
+app.get('/api/tutor-student-assignments', (req, res) => {
+  if (!db.tutorStudentAssignments) db.tutorStudentAssignments = [];
+  let list = [...db.tutorStudentAssignments];
+  const { tutorId, studentId, status, subject } = req.query;
+
+  if (tutorId) {
+    list = list.filter(a => a.tutorId === tutorId);
+  }
+  if (studentId) {
+    list = list.filter(a => a.studentId === studentId);
+  }
+  if (status && status !== 'ALL') {
+    list = list.filter(a => (a.status || '').toUpperCase() === status.toUpperCase());
+  }
+  if (subject && subject !== 'ALL') {
+    list = list.filter(a => (a.subject || '').toLowerCase().includes(subject.toLowerCase()));
+  }
+
+  const enriched = list.map(enrichAssignment);
+  res.json({
+    success: true,
+    assignments: enriched,
+    total: enriched.length
+  });
+});
+
+// 2. Metrics for Appointed Tutors & Assignments
+app.get('/api/tutor-student-assignments/metrics', (req, res) => {
+  if (!db.tutorStudentAssignments) db.tutorStudentAssignments = [];
+  const assignments = db.tutorStudentAssignments;
+  const tutors = db.tutors || [];
+  const students = db.students || [];
+
+  // Appointed tutors
+  const appointedTutors = tutors.filter(t =>
+    t.status === 'TUTOR_APPOINTED' ||
+    t.status === 'ACTIVE' ||
+    t.isAppointed === true ||
+    t.is_appointed === true ||
+    (db.appointments || []).some(a => a.tutorId === t.id && a.status === 'ACTIVE')
+  );
+
+  const totalAppointedTutors = appointedTutors.length;
+  const activeAssignments = assignments.filter(a => a.status === 'ACTIVE');
+
+  // Unique students with at least 1 ACTIVE assignment
+  const activeStudentIds = new Set(activeAssignments.map(a => a.studentId));
+  const totalAssignedStudents = activeStudentIds.size;
+
+  // Unassigned students = students with no ACTIVE assignment
+  const unassignedStudents = students.filter(s => !activeStudentIds.has(s.id)).length;
+
+  // Tutors with no active student assignments
+  const activeTutorIds = new Set(activeAssignments.map(a => a.tutorId));
+  const tutorsWithNoStudents = appointedTutors.filter(t => !activeTutorIds.has(t.id)).length;
+
+  res.json({
+    success: true,
+    metrics: {
+      totalAppointedTutors,
+      totalAssignedStudents,
+      activeAssignments: activeAssignments.length,
+      unassignedStudents,
+      tutorsWithNoStudents
+    }
+  });
+});
+
+// 3. Create New Tutor-Student Assignment
+app.post('/api/tutor-student-assignments', (req, res) => {
+  if (!db.tutorStudentAssignments) db.tutorStudentAssignments = [];
+
+  const {
+    tutorId,
+    studentId,
+    subject,
+    class: studentClass,
+    lessonType,
+    days,
+    startTime,
+    endTime,
+    location,
+    monthlyFee,
+    hourlyFee,
+    startDate,
+    notes
+  } = req.body;
+
+  // Validation 1: Required fields
+  if (!tutorId || !studentId || !subject || !startDate) {
+    return res.status(400).json({
+      error: 'Tutor, Student, Subject, and Start Date are required.'
+    });
+  }
+
+  // Validation 2: Tutor exists and is appointed / active
+  const tutor = (db.tutors || []).find(t => t.id === tutorId || t.tutorId === tutorId);
+  if (!tutor) {
+    return res.status(404).json({ error: 'Appointed tutor not found.' });
+  }
+
+  const isAppointed =
+    tutor.status === 'TUTOR_APPOINTED' ||
+    tutor.status === 'ACTIVE' ||
+    tutor.isAppointed === true ||
+    tutor.is_appointed === true ||
+    (db.appointments || []).some(a => a.tutorId === tutor.id && a.status === 'ACTIVE');
+
+  if (!isAppointed) {
+    return res.status(400).json({
+      error: `Tutor ${tutor.fullName} is not currently appointed. Recruitment status must be APPOINTED.`
+    });
+  }
+
+  // Validation 3: Student exists
+  const student = (db.students || []).find(s => s.id === studentId);
+  if (!student) {
+    return res.status(404).json({ error: 'Student record not found.' });
+  }
+
+  // Validation 4: Duplicate active assignment check
+  const duplicateActive = db.tutorStudentAssignments.find(
+    a =>
+      a.tutorId === tutor.id &&
+      a.studentId === student.id &&
+      (a.subject || '').toLowerCase() === subject.toLowerCase() &&
+      a.status === 'ACTIVE'
+  );
+
+  if (duplicateActive) {
+    return res.status(400).json({
+      error: `Tutor ${tutor.fullName} is already actively assigned to ${student.studentName} for ${subject}. Duplicate active assignment is prevented.`
+    });
+  }
+
+  // Soft Warnings (Non-blocking alerts)
+  const warnings = [];
+
+  // Subject compatibility check
+  const tutorSubjects = Array.isArray(tutor.subjects) ? tutor.subjects : [tutor.subjects || ''];
+  const teachesSubject = tutorSubjects.some(s =>
+    s.toLowerCase().includes(subject.toLowerCase()) || subject.toLowerCase().includes(s.toLowerCase())
+  );
+  if (!teachesSubject) {
+    warnings.push(`Tutor's listed subjects (${tutorSubjects.join(', ')}) do not explicitly list '${subject}'.`);
+  }
+
+  // Location mismatch check
+  const effectiveLocation = location || student.location || '';
+  if (tutor.preferredLocation && effectiveLocation &&
+      !tutor.preferredLocation.toLowerCase().includes(effectiveLocation.toLowerCase()) &&
+      !effectiveLocation.toLowerCase().includes(tutor.preferredLocation.toLowerCase())) {
+    warnings.push(`Location mismatch: Tutor prefers '${tutor.preferredLocation}', but tuition location is '${effectiveLocation}'.`);
+  }
+
+  // Timing overlap check against tutor's other active lessons
+  const selectedDays = Array.isArray(days) ? days : (days ? [days] : ['Monday', 'Wednesday', 'Friday']);
+  const otherTutorActive = db.tutorStudentAssignments.filter(a => a.tutorId === tutor.id && a.status === 'ACTIVE');
+  for (const existing of otherTutorActive) {
+    const existingDays = Array.isArray(existing.days) ? existing.days : [existing.days];
+    const commonDays = selectedDays.filter(d => existingDays.includes(d));
+    if (commonDays.length > 0 && startTime && existing.startTime === startTime) {
+      warnings.push(`Timing overlap on ${commonDays.join(', ')}: Tutor already has an active lesson at ${existing.startTime} with another student.`);
+      break;
+    }
+  }
+
+  const now = new Date().toISOString();
+  const assignmentId = 'tsa-' + Date.now();
+  const newAssignment = {
+    id: assignmentId,
+    tutorId: tutor.id,
+    studentId: student.id,
+    subject,
+    class: studentClass || student.class || 'Standard',
+    lessonType: lessonType || 'Home Tuition',
+    days: selectedDays,
+    startTime: startTime || '05:00 PM',
+    endTime: endTime || '07:00 PM',
+    location: effectiveLocation,
+    monthlyFee: Number(monthlyFee) || 5000,
+    hourlyFee: hourlyFee ? Number(hourlyFee) : undefined,
+    startDate,
+    status: 'ACTIVE',
+    notes: notes || '',
+    createdAt: now,
+    updatedAt: now
+  };
+
+  db.tutorStudentAssignments.unshift(newAssignment);
+
+  // Update student status & assignedTutorId without modifying original contact information
+  student.status = 'TUTOR_ASSIGNED';
+  student.assignedTutorId = tutor.id;
+
+  // Activity Log
+  addLog(
+    tutor.id,
+    'Admin',
+    'STUDENT_ASSIGNED',
+    `Assigned student ${student.studentName} (${subject}) to appointed tutor ${tutor.fullName}.`
+  );
+  addNotification(
+    'Student Assigned to Tutor',
+    `${student.studentName} has been assigned to ${tutor.fullName} for ${subject}.`,
+    'success',
+    '/appointed-tutors'
+  );
+
+  saveDB(db);
+
+  res.status(201).json({
+    success: true,
+    message: 'Student assigned successfully.',
+    assignment: enrichAssignment(newAssignment),
+    warnings
+  });
+});
+
+// 4. Update Tutor-Student Assignment
+app.put('/api/tutor-student-assignments/:id', (req, res) => {
+  if (!db.tutorStudentAssignments) db.tutorStudentAssignments = [];
+  const assignment = db.tutorStudentAssignments.find(a => a.id === req.params.id);
+  if (!assignment) {
+    return res.status(404).json({ error: 'Assignment not found.' });
+  }
+
+  const {
+    subject,
+    class: studentClass,
+    lessonType,
+    days,
+    startTime,
+    endTime,
+    location,
+    monthlyFee,
+    hourlyFee,
+    startDate,
+    notes,
+    status
+  } = req.body;
+
+  if (subject !== undefined) assignment.subject = subject;
+  if (studentClass !== undefined) assignment.class = studentClass;
+  if (lessonType !== undefined) assignment.lessonType = lessonType;
+  if (days !== undefined) assignment.days = Array.isArray(days) ? days : [days];
+  if (startTime !== undefined) assignment.startTime = startTime;
+  if (endTime !== undefined) assignment.endTime = endTime;
+  if (location !== undefined) assignment.location = location;
+  if (monthlyFee !== undefined) assignment.monthlyFee = Number(monthlyFee);
+  if (hourlyFee !== undefined) assignment.hourlyFee = Number(hourlyFee);
+  if (startDate !== undefined) assignment.startDate = startDate;
+  if (notes !== undefined) assignment.notes = notes;
+  if (status !== undefined && ['ACTIVE', 'PAUSED', 'COMPLETED', 'CANCELLED'].includes(status)) {
+    assignment.status = status;
+  }
+  assignment.updatedAt = new Date().toISOString();
+
+  saveDB(db);
+  res.json({
+    success: true,
+    message: 'Assignment updated successfully.',
+    assignment: enrichAssignment(assignment)
+  });
+});
+
+// 5. Update Status (Pause, Resume, Complete, Cancel)
+app.patch('/api/tutor-student-assignments/:id/status', (req, res) => {
+  if (!db.tutorStudentAssignments) db.tutorStudentAssignments = [];
+  const assignment = db.tutorStudentAssignments.find(a => a.id === req.params.id);
+  if (!assignment) {
+    return res.status(404).json({ error: 'Assignment not found.' });
+  }
+
+  const { status } = req.body;
+  const validStatuses = ['ACTIVE', 'PAUSED', 'COMPLETED', 'CANCELLED'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
+  }
+
+  assignment.status = status;
+  assignment.updatedAt = new Date().toISOString();
+
+  // If student no longer has any ACTIVE assignment, transition student status back to PENDING_MATCH
+  const student = (db.students || []).find(s => s.id === assignment.studentId);
+  if (student) {
+    const hasOtherActive = db.tutorStudentAssignments.some(
+      a => a.studentId === student.id && a.status === 'ACTIVE'
+    );
+    if (!hasOtherActive && status !== 'ACTIVE') {
+      student.status = 'PENDING_MATCH';
+    } else if (status === 'ACTIVE') {
+      student.status = 'TUTOR_ASSIGNED';
+      student.assignedTutorId = assignment.tutorId;
+    }
+  }
+
+  saveDB(db);
+
+  addLog(
+    assignment.tutorId,
+    'Admin',
+    'ASSIGNMENT_STATUS_UPDATED',
+    `Assignment ${assignment.id} status updated to ${status}.`
+  );
+
+  res.json({
+    success: true,
+    message: `Assignment status updated to ${status}.`,
+    assignment: enrichAssignment(assignment)
+  });
+});
+
+
 app.get('/api/students', (req, res) => {
   let list = [...(db.students || [])];
   const { search, class: studentClass, platform } = req.query;
@@ -2482,6 +3637,285 @@ app.get('/api/leads/:id', (req, res) => {
   const lead = (db.leads || []).find(l => l.id === req.params.id);
   if (!lead) return res.status(404).json({ error: 'Lead not found' });
   res.json({ lead });
+});
+
+// ==========================================
+// PUBLIC WEBSITE INTEGRATION ENDPOINTS
+// ==========================================
+
+// Health / Status Check for Marketing Website
+app.get('/api/public/status', (req, res) => {
+  res.json({
+    status: 'online',
+    service: 'Charithra Learning Hub CRM API',
+    version: '2.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 1. Academic Tuition Enquiry from Website
+app.post('/api/public/enquiry', (req, res) => {
+  const { studentName, grade, board, learningMode, selectedSubjects, parentPhone, notes } = req.body;
+  if (!studentName || !parentPhone) {
+    return res.status(400).json({ success: false, error: 'Student Name and Parent Phone Number are required' });
+  }
+
+  const cleanP = cleanPhone(parentPhone);
+  const subjectsList = Array.isArray(selectedSubjects) && selectedSubjects.length > 0 ? selectedSubjects : ['General Academics'];
+  const modeStr = (learningMode || 'Both').toUpperCase();
+  const gradeStr = grade || 'Not Specified';
+  const boardStr = board || 'CBSE';
+
+  const enquiryMessage = `Academic Tuition Enquiry for ${studentName} (${gradeStr}, ${boardStr}). Mode: ${modeStr}. Subjects: ${subjectsList.join(', ')}.${notes ? ' Note: ' + notes : ''}`;
+
+  const newLead = {
+    id: 'lead-web-' + Date.now(),
+    leadSource: 'WEBSITE',
+    platform: 'website',
+    name: studentName,
+    phoneNumber: cleanP,
+    email: 'Not Provided',
+    externalLeadId: 'web_enq_' + Date.now(),
+    campaignName: 'Academic Tuition Enquiry',
+    adName: `${modeStr} Learning`,
+    subjects: subjectsList,
+    experience: `${gradeStr} (${boardStr})`,
+    message: enquiryMessage,
+    messages: [
+      {
+        id: 'msg-' + Date.now(),
+        sender: 'user',
+        text: enquiryMessage,
+        timestamp: new Date().toISOString()
+      }
+    ],
+    status: 'NEW_LEAD',
+    convertedType: null,
+    convertedId: null,
+    createdAt: new Date().toISOString(),
+    sourceCreatedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!db.leads) db.leads = [];
+  db.leads.unshift(newLead);
+
+  addLog(null, 'Website', 'WEBSITE_ENQUIRY_RECEIVED', `New academic tuition enquiry received from website: ${studentName} (${cleanP}) - ${subjectsList.join(', ')}.`);
+  addNotification(
+    'New Website Tuition Enquiry',
+    `${studentName} enrolled for ${subjectsList.join(', ')} (${gradeStr}, ${boardStr}). Phone: ${cleanP}`,
+    'info',
+    '/leads'
+  );
+
+  saveDB(db);
+  res.status(201).json({
+    success: true,
+    lead: newLead,
+    message: 'Academic enquiry received successfully'
+  });
+});
+
+// 2. One-Day Workshop Booking from Website
+app.post('/api/public/workshop', (req, res) => {
+  const { childName, childGrade, selectedTrack, selectedTrackTitle, selectedDate, parentPhone } = req.body;
+  if (!childName || !parentPhone) {
+    return res.status(400).json({ success: false, error: 'Child Name and Parent Phone Number are required' });
+  }
+
+  const cleanP = cleanPhone(parentPhone);
+  const trackTitle = selectedTrackTitle || 'Future Skills Workshop';
+  const slotDate = selectedDate || 'Upcoming Weekend Batch';
+  const gradeStr = childGrade || 'School Student';
+
+  const workshopMessage = `One-Day Workshop Booking for ${childName} (${gradeStr}). Workshop: ${trackTitle}. Selected Slot: ${slotDate}.`;
+
+  const newLead = {
+    id: 'lead-ws-' + Date.now(),
+    leadSource: 'WEBSITE',
+    platform: 'website',
+    name: childName,
+    phoneNumber: cleanP,
+    email: 'Not Provided',
+    externalLeadId: 'web_ws_' + Date.now(),
+    campaignName: `Workshop - ${trackTitle}`,
+    adName: 'One-Day Technology Pass',
+    subjects: [trackTitle],
+    experience: `${gradeStr} | ${slotDate}`,
+    message: workshopMessage,
+    messages: [
+      {
+        id: 'msg-' + Date.now(),
+        sender: 'user',
+        text: workshopMessage,
+        timestamp: new Date().toISOString()
+      }
+    ],
+    status: 'NEW_LEAD',
+    convertedType: null,
+    convertedId: null,
+    createdAt: new Date().toISOString(),
+    sourceCreatedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!db.leads) db.leads = [];
+  db.leads.unshift(newLead);
+
+  addLog(null, 'Website', 'WEBSITE_WORKSHOP_BOOKED', `New workshop seat booking from website: ${childName} (${cleanP}) for ${trackTitle}.`);
+  addNotification(
+    'New Workshop Booking',
+    `${childName} booked for ${trackTitle} on ${slotDate}. Phone: ${cleanP}`,
+    'success',
+    '/leads'
+  );
+
+  saveDB(db);
+  res.status(201).json({
+    success: true,
+    lead: newLead,
+    message: 'Workshop seat reserved successfully'
+  });
+});
+
+// 3. Teacher / Tutor Career Application from Website
+app.post('/api/public/tutor-apply', (req, res) => {
+  const {
+    fullName,
+    phone,
+    email,
+    qualification,
+    specialization,
+    experience,
+    subjects,
+    preferredLocation,
+    availableTiming,
+    message
+  } = req.body;
+
+  if (!fullName || !phone) {
+    return res.status(400).json({ success: false, error: 'Full Name and Phone Number are required' });
+  }
+
+  const cleanP = cleanPhone(phone);
+  const userEmail = (email || '').trim().toLowerCase();
+
+  // Check duplicate tutor
+  const dupTutor = (db.tutors || []).find(t =>
+    (cleanP && t.mobile && cleanPhone(t.mobile) === cleanP) ||
+    (userEmail && userEmail !== 'not provided' && t.email && t.email.toLowerCase() === userEmail)
+  );
+
+  if (dupTutor) {
+    return res.status(400).json({
+      success: false,
+      error: `A tutor candidate with phone "${cleanP}" or email "${userEmail}" is already registered: ${dupTutor.fullName} (${dupTutor.tutorId}).`
+    });
+  }
+
+  const tutorId = 'TUT-2026-' + ((db.tutors || []).length + 1).toString().padStart(3, '0');
+  const subjectsList = Array.isArray(subjects) ? subjects : (subjects ? String(subjects).split(',').map(s => s.trim()) : ['General']);
+
+  const newTutor = {
+    id: 'tut-' + Date.now(),
+    tutorId,
+    externalLeadId: 'web_apply_' + Date.now(),
+    fullName,
+    mobile: cleanP,
+    phone: cleanP,
+    whatsapp: cleanP,
+    email: (userEmail && userEmail !== 'not provided') ? userEmail : `${tutorId.toLowerCase()}@charithrahub.com`,
+    gender: 'Not Provided',
+    dob: 'Not Provided',
+    qualification: qualification || 'Bachelor Degree',
+    specialization: specialization || 'Education',
+    experience: experience || '1+ Year',
+    experienceYears: parseInt(experience, 10) || 1,
+    subjects: subjectsList,
+    subjectsText: subjectsList.join(', '),
+    homeTuitionAvailable: 'yes',
+    preferredLocation: preferredLocation || 'Centre / Online',
+    availableTiming: availableTiming || 'Flexible',
+    expectedSalary: 15000,
+    priority: 'NOT_ASSIGNED',
+    status: 'NEW_APPLICATION',
+    leadSource: 'WEBSITE',
+    platform: 'website',
+    campaignName: 'Website Teacher Career Application',
+    adName: 'Online Tutor Recruitment',
+    notes: message || 'Direct application submitted via public website',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!db.tutors) db.tutors = [];
+  db.tutors.unshift(newTutor);
+
+  // Initialize verification documents
+  const docTypes = ['Resume', 'Qualification Certificate', 'Degree Certificate', 'Experience Certificate', 'Address Proof', 'Photo ID'];
+  if (!db.tutorDocuments) db.tutorDocuments = [];
+  docTypes.forEach((docType, idx) => {
+    db.tutorDocuments.push({
+      id: `doc-${newTutor.id}-${idx + 1}`,
+      tutorId: newTutor.id,
+      docType,
+      fileName: `${newTutor.fullName.replace(/\s+/g, '_')}_${docType.replace(/\s+/g, '_')}.pdf`,
+      status: 'Pending',
+      remarks: 'Awaiting candidate verification',
+      uploadedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+  });
+
+  // Also create a linked website lead entry for full CRM tracking visibility
+  const leadMessage = `Teacher Career Application: ${fullName} (${qualification || 'Graduate'}). Exp: ${experience || '1+ yr'}. Subjects: ${subjectsList.join(', ')}.${message ? ' Message: ' + message : ''}`;
+  const newLead = {
+    id: 'lead-tutor-' + Date.now(),
+    leadSource: 'WEBSITE',
+    platform: 'website',
+    name: fullName,
+    phoneNumber: cleanP,
+    email: userEmail || 'Not Provided',
+    externalLeadId: newTutor.externalLeadId,
+    campaignName: 'Website Teacher Career Application',
+    adName: 'Online Tutor Recruitment',
+    subjects: subjectsList,
+    experience: experience || '1+ Year',
+    message: leadMessage,
+    messages: [
+      {
+        id: 'msg-' + Date.now(),
+        sender: 'user',
+        text: leadMessage,
+        timestamp: new Date().toISOString()
+      }
+    ],
+    status: 'CONVERTED',
+    convertedType: 'TUTOR',
+    convertedId: newTutor.id,
+    createdAt: new Date().toISOString(),
+    sourceCreatedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!db.leads) db.leads = [];
+  db.leads.unshift(newLead);
+
+  addLog(newTutor.id, 'Website', 'TUTOR_ONLINE_APPLICATION', `Direct online tutor application received from ${fullName} (${tutorId}, ${cleanP}).`);
+  addNotification(
+    'New Teacher Application Received',
+    `${fullName} applied to teach ${subjectsList.join(', ')} (Candidate ${tutorId}).`,
+    'success',
+    `/tutors`
+  );
+
+  saveDB(db);
+  res.status(201).json({
+    success: true,
+    tutor: newTutor,
+    lead: newLead,
+    message: `Teacher application submitted successfully! Reference ID: ${tutorId}`
+  });
 });
 
 // 5. Manual Lead Entry
@@ -3779,6 +5213,648 @@ app.get('/api/tutors/:id/priority-breakdown', (req, res) => {
     tutor
   });
 });
+
+
+
+
+// =========================================================================
+// AUTHENTICATION, JWT, ROLE PROTECTION & DAILY TUTOR UPDATES
+// =========================================================================
+
+const multer = require('multer');
+
+// Uploads Directory for Daily Updates Photos
+const uploadsDir = path.join(__dirname, '../uploads/daily-updates');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Configure Multer for Daily Update Photos
+const uploadStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'update-' + uniqueSuffix + ext);
+  }
+});
+
+const uploadDailyUpdatePhoto = multer({
+  storage: uploadStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|webp/;
+    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+    const mime = allowed.test(file.mimetype);
+    if (ext && mime) {
+      return cb(null, true);
+    }
+    cb(new Error('Only images (.jpg, .jpeg, .png, .webp) are allowed!'));
+  }
+});
+
+// Phone Number Comparison Helper
+function phonesMatch(p1, p2) {
+  if (!p1 || !p2) return false;
+  const c1 = cleanPhone(p1).replace(/\D/g, '');
+  const c2 = cleanPhone(p2).replace(/\D/g, '');
+  if (!c1 || !c2) return false;
+  if (c1 === c2) return true;
+  const l1 = c1.slice(-10);
+  const l2 = c2.slice(-10);
+  return l1.length === 10 && l2.length === 10 && l1 === l2;
+}
+
+// -------------------------------------------------------------------------
+// POST /api/auth/login
+// -------------------------------------------------------------------------
+app.post('/api/auth/login', (req, res) => {
+  const { role, username, password } = req.body || {};
+  if (!username || !password) {
+    return res.status(400).json({ success: false, error: 'Please enter username and password.' });
+  }
+
+  const cleanUser = String(username).trim();
+  const cleanPass = String(password).trim();
+  const selectedRole = String(role || '').trim();
+
+  // 1. ADMIN LOGIN
+  if (selectedRole.toLowerCase() === 'admin') {
+    if (cleanUser.toLowerCase() === 'admin' && cleanPass === '1234') {
+      const userPayload = {
+        userId: 'admin-001',
+        role: 'ADMIN',
+        name: 'System Administrator',
+        username: 'admin'
+      };
+      const token = signToken(userPayload);
+      return res.json({
+        success: true,
+        token,
+        user: userPayload,
+        redirectUrl: '/admin/dashboard'
+      });
+    } else {
+      return res.status(401).json({ success: false, error: 'Invalid username or password.' });
+    }
+  }
+
+  // 2. TUTOR LOGIN
+  if (selectedRole.toLowerCase() === 'tutor') {
+    const tutors = db.tutors || [];
+    const tutor = tutors.find(t =>
+      t.fullName && t.fullName.trim().toLowerCase() === cleanUser.toLowerCase() && t.isDeleted !== true
+    );
+
+    if (!tutor) {
+      return res.status(401).json({ success: false, error: 'Invalid username or password.' });
+    }
+
+    // Check Tutor Appointment Status
+    const isAppointed =
+      tutor.status === 'TUTOR_APPOINTED' ||
+      tutor.status === 'APPOINTED' ||
+      tutor.currentStage === 'TUTOR_APPOINTED';
+
+    if (!isAppointed) {
+      return res.status(403).json({
+        success: false,
+        error: 'Your tutor account is not active yet. Please contact the administrator.'
+      });
+    }
+
+    // Check Phone Password
+    const tutorPhone = tutor.mobile || tutor.phone || tutor.whatsappPhoneNumber;
+    if (!phonesMatch(tutorPhone, cleanPass)) {
+      return res.status(401).json({ success: false, error: 'Invalid username or password.' });
+    }
+
+    const userPayload = {
+      userId: tutor.id,
+      tutorId: tutor.id,
+      role: 'TUTOR',
+      name: tutor.fullName,
+      fullName: tutor.fullName,
+      mobile: tutor.mobile || tutor.phone,
+      email: tutor.email,
+      subjects: tutor.subjects,
+      qualification: tutor.qualification,
+      status: tutor.status
+    };
+    const token = signToken(userPayload);
+    return res.json({
+      success: true,
+      token,
+      user: userPayload,
+      redirectUrl: '/tutor/dashboard'
+    });
+  }
+
+  // 3. PARENT LOGIN
+  if (selectedRole.toLowerCase() === 'parent') {
+    const students = db.students || [];
+    const student = students.find(s => {
+      const name = s.studentName || s.fullName || s.name;
+      return name && name.trim().toLowerCase() === cleanUser.toLowerCase() && s.isDeleted !== true;
+    });
+
+    if (!student) {
+      return res.status(404).json({ success: false, error: 'Student account not found.' });
+    }
+
+    const studentPhone = student.phone || student.parentPhone || student.mobile;
+    if (!phonesMatch(studentPhone, cleanPass)) {
+      return res.status(401).json({ success: false, error: 'Invalid username or password.' });
+    }
+
+    const userPayload = {
+      userId: student.parentId || student.id,
+      studentId: student.id,
+      parentId: student.parentId || null,
+      role: 'PARENT',
+      name: student.studentName || student.fullName || student.name,
+      studentName: student.studentName || student.fullName || student.name,
+      phone: studentPhone,
+      email: student.email || student.parentEmail,
+      class: student.class,
+      location: student.location
+    };
+    const token = signToken(userPayload);
+    return res.json({
+      success: true,
+      token,
+      user: userPayload,
+      redirectUrl: '/parent/dashboard'
+    });
+  }
+
+  return res.status(400).json({ success: false, error: 'Invalid role specified.' });
+});
+
+// -------------------------------------------------------------------------
+// GET /api/auth/me
+// -------------------------------------------------------------------------
+app.get('/api/auth/me', (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ success: false, error: 'Not authenticated' });
+  }
+  res.json({ success: true, user: req.user });
+});
+
+// -------------------------------------------------------------------------
+// POST /api/auth/forgot-password
+// -------------------------------------------------------------------------
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { username, role } = req.body || {};
+  return res.json({
+    success: true,
+    message: 'If your account is active, your credentials/reset instructions have been sent to your registered contact.'
+  });
+});
+
+// -------------------------------------------------------------------------
+// TUTOR PORTAL APIS
+// -------------------------------------------------------------------------
+
+// GET /api/tutor/dashboard-metrics
+app.get('/api/tutor/dashboard-metrics', requireRole(['TUTOR', 'ADMIN']), (req, res) => {
+  const tutorId = req.user.tutorId || (db.tutors[0] && db.tutors[0].id);
+  const assignments = (db.tutorStudentAssignments || []).filter(a => a.tutorId === tutorId && a.status === 'ACTIVE');
+  const uniqueStudents = new Set(assignments.map(a => a.studentId));
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayDayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
+
+  // Today's classes based on assigned days
+  const todayClasses = assignments.filter(a => Array.isArray(a.days) && a.days.some(d => d.toLowerCase().includes(todayDayName.toLowerCase())));
+
+  // Updates posted today
+  const updates = (db.tutorDailyUpdates || []).filter(u => u.tutorId === tutorId);
+  const updatesToday = updates.filter(u => u.updateDate === todayStr || (u.createdAt && u.createdAt.slice(0, 10) === todayStr));
+
+  res.json({
+    success: true,
+    metrics: {
+      todayClassesCount: todayClasses.length,
+      assignedStudentsCount: uniqueStudents.size,
+      updatesTodayCount: updatesToday.length,
+      upcomingClassesCount: assignments.length,
+      totalUpdatesCount: updates.length
+    },
+    todayClasses,
+    recentUpdates: updates.slice(0, 5)
+  });
+});
+
+// GET /api/tutor/students
+app.get('/api/tutor/students', requireRole(['TUTOR', 'ADMIN']), (req, res) => {
+  const tutorId = req.user.tutorId || (db.tutors[0] && db.tutors[0].id);
+  const assignments = (db.tutorStudentAssignments || []).filter(a => a.tutorId === tutorId && a.status === 'ACTIVE');
+  const students = db.students || [];
+
+  const assignedStudents = assignments.map(a => {
+    const student = students.find(s => s.id === a.studentId);
+    return {
+      assignmentId: a.id,
+      studentId: a.studentId,
+      studentName: student ? (student.studentName || student.fullName) : a.studentName || 'Student',
+      phone: student ? student.phone : a.studentPhone,
+      parentPhone: student ? student.parentPhone : a.parentPhone,
+      email: student ? student.email : null,
+      class: a.class || (student && student.class) || '10th Standard',
+      subject: a.subject,
+      days: a.days || [],
+      startTime: a.startTime,
+      endTime: a.endTime,
+      location: a.location || (student && student.location),
+      lessonType: a.lessonType || 'Home Tuition',
+      monthlyFee: a.monthlyFee,
+      startDate: a.startDate,
+      status: a.status
+    };
+  });
+
+  res.json({
+    success: true,
+    students: assignedStudents
+  });
+});
+
+// GET /api/tutor/classes
+app.get('/api/tutor/classes', requireRole(['TUTOR', 'ADMIN']), (req, res) => {
+  const tutorId = req.user.tutorId || (db.tutors[0] && db.tutors[0].id);
+  const assignments = (db.tutorStudentAssignments || []).filter(a => a.tutorId === tutorId && a.status === 'ACTIVE');
+  const students = db.students || [];
+
+  const classes = assignments.map(a => {
+    const student = students.find(s => s.id === a.studentId);
+    return {
+      id: a.id,
+      studentId: a.studentId,
+      studentName: student ? (student.studentName || student.fullName) : a.studentName,
+      subject: a.subject,
+      class: a.class || (student && student.class),
+      days: a.days || [],
+      startTime: a.startTime,
+      endTime: a.endTime,
+      location: a.location || (student && student.location),
+      lessonType: a.lessonType
+    };
+  });
+
+  res.json({
+    success: true,
+    classes
+  });
+});
+
+// GET /api/tutor/daily-updates
+app.get('/api/tutor/daily-updates', requireRole(['TUTOR', 'ADMIN']), (req, res) => {
+  const tutorId = req.user.tutorId || (db.tutors[0] && db.tutors[0].id);
+  let updates = (db.tutorDailyUpdates || []).filter(u => u.tutorId === tutorId);
+
+  const { studentId, subject, date } = req.query;
+  if (studentId) updates = updates.filter(u => u.studentId === studentId);
+  if (subject) updates = updates.filter(u => u.subject.toLowerCase() === subject.toLowerCase());
+  if (date) updates = updates.filter(u => u.updateDate === date);
+
+  // Sort newest first
+  updates.sort((a, b) => new Date(b.createdAt || b.updateDate) - new Date(a.createdAt || a.updateDate));
+
+  res.json({
+    success: true,
+    updates,
+    total: updates.length
+  });
+});
+
+// POST /api/tutor/daily-updates
+app.post('/api/tutor/daily-updates', requireRole(['TUTOR', 'ADMIN']), uploadDailyUpdatePhoto.single('photo'), (req, res) => {
+  try {
+    const tutorId = req.user.tutorId || req.body.tutorId;
+    const tutor = (db.tutors || []).find(t => t.id === tutorId);
+    const tutorName = tutor ? tutor.fullName : (req.user.name || req.body.tutorName || 'Tutor');
+
+    const {
+      studentId,
+      subject,
+      updateDate,
+      date,
+      thought,
+      topicsCovered,
+      homework,
+      studentProgress,
+      classTiming,
+      notes
+    } = req.body;
+
+    if (!subject || !thought) {
+      return res.status(400).json({ success: false, error: 'Subject and Teaching Update Thought are required.' });
+    }
+
+    let student = null;
+    if (studentId && studentId !== 'ALL' && studentId !== 'general') {
+      student = (db.students || []).find(s => s.id === studentId);
+    }
+
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = '/uploads/daily-updates/' + req.file.filename;
+    } else if (req.body.imageUrl) {
+      imageUrl = req.body.imageUrl;
+    }
+
+    const newUpdate = {
+      id: 'tdu-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+      tutorId,
+      tutorName,
+      studentId: student ? student.id : (studentId === 'ALL' || !studentId ? null : studentId),
+      studentName: student ? (student.studentName || student.fullName) : (studentId ? req.body.studentName : 'General Update'),
+      subject: String(subject).trim(),
+      updateDate: updateDate || date || new Date().toISOString().slice(0, 10),
+      thought: String(thought).trim(),
+      topicsCovered: topicsCovered ? String(topicsCovered).trim() : '',
+      homework: homework ? String(homework).trim() : '',
+      studentProgress: studentProgress || 'Good',
+      classTiming: classTiming || '',
+      notes: notes ? String(notes).trim() : '',
+      imageUrl,
+      status: 'PUBLISHED',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    if (!Array.isArray(db.tutorDailyUpdates)) {
+      db.tutorDailyUpdates = [];
+    }
+    db.tutorDailyUpdates.unshift(newUpdate);
+
+    // Create notifications for Admin and Parent
+    addNotification(
+      'Daily Tutor Update Posted',
+      (tutorName + ' posted daily update for ' + newUpdate.studentName + ' (' + newUpdate.subject + ')'),
+      'info',
+      '/admin/tutor-updates'
+    );
+
+    saveDB(db);
+
+    res.status(201).json({
+      success: true,
+      message: 'Daily update published successfully.',
+      update: newUpdate
+    });
+  } catch (err) {
+    console.error('Error creating daily update:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PUT /api/tutor/daily-updates/:id
+app.put('/api/tutor/daily-updates/:id', requireRole(['TUTOR', 'ADMIN']), uploadDailyUpdatePhoto.single('photo'), (req, res) => {
+  const updateIndex = (db.tutorDailyUpdates || []).findIndex(u => u.id === req.params.id);
+  if (updateIndex === -1) {
+    return res.status(404).json({ success: false, error: 'Daily update not found' });
+  }
+
+  const existing = db.tutorDailyUpdates[updateIndex];
+  // Verify tutor ownership (admin can edit any)
+  if (req.user.role === 'TUTOR' && existing.tutorId !== req.user.tutorId) {
+    return res.status(403).json({ success: false, error: 'You are not authorized to edit this update.' });
+  }
+
+  let imageUrl = existing.imageUrl;
+  if (req.file) {
+    imageUrl = '/uploads/daily-updates/' + req.file.filename;
+  } else if (req.body.imageUrl !== undefined) {
+    imageUrl = req.body.imageUrl;
+  }
+
+  const updated = {
+    ...existing,
+    subject: req.body.subject !== undefined ? req.body.subject : existing.subject,
+    updateDate: req.body.updateDate || req.body.date || existing.updateDate,
+    thought: req.body.thought !== undefined ? req.body.thought : existing.thought,
+    topicsCovered: req.body.topicsCovered !== undefined ? req.body.topicsCovered : existing.topicsCovered,
+    homework: req.body.homework !== undefined ? req.body.homework : existing.homework,
+    studentProgress: req.body.studentProgress !== undefined ? req.body.studentProgress : existing.studentProgress,
+    classTiming: req.body.classTiming !== undefined ? req.body.classTiming : existing.classTiming,
+    notes: req.body.notes !== undefined ? req.body.notes : existing.notes,
+    imageUrl,
+    updatedAt: new Date().toISOString()
+  };
+
+  db.tutorDailyUpdates[updateIndex] = updated;
+  saveDB(db);
+
+  res.json({
+    success: true,
+    message: 'Update revised successfully.',
+    update: updated
+  });
+});
+
+// DELETE /api/tutor/daily-updates/:id
+app.delete('/api/tutor/daily-updates/:id', requireRole(['TUTOR', 'ADMIN']), (req, res) => {
+  const updateIndex = (db.tutorDailyUpdates || []).findIndex(u => u.id === req.params.id);
+  if (updateIndex === -1) {
+    return res.status(404).json({ success: false, error: 'Daily update not found' });
+  }
+
+  const existing = db.tutorDailyUpdates[updateIndex];
+  if (req.user.role === 'TUTOR' && existing.tutorId !== req.user.tutorId) {
+    return res.status(403).json({ success: false, error: 'You are not authorized to delete this update.' });
+  }
+
+  db.tutorDailyUpdates.splice(updateIndex, 1);
+  saveDB(db);
+
+  res.json({
+    success: true,
+    message: 'Daily update deleted successfully.'
+  });
+});
+
+// -------------------------------------------------------------------------
+// PARENT PORTAL APIS
+// -------------------------------------------------------------------------
+
+// GET /api/parent/dashboard
+app.get('/api/parent/dashboard', requireRole(['PARENT', 'ADMIN']), (req, res) => {
+  const studentId = req.user.studentId || (req.query.studentId && req.query.studentId);
+  const student = (db.students || []).find(s => s.id === studentId);
+
+  if (!student) {
+    return res.status(404).json({ success: false, error: 'Student record not found.' });
+  }
+
+  const assignments = (db.tutorStudentAssignments || []).filter(a => a.studentId === studentId && a.status === 'ACTIVE');
+  const tutors = db.tutors || [];
+
+  const assignedTutors = assignments.map(a => {
+    const tutor = tutors.find(t => t.id === a.tutorId);
+    return {
+      assignmentId: a.id,
+      tutorId: a.tutorId,
+      tutorName: tutor ? tutor.fullName : a.tutorName,
+      tutorPhone: tutor ? (tutor.mobile || tutor.phone) : a.tutorPhone,
+      subject: a.subject,
+      days: a.days,
+      startTime: a.startTime,
+      endTime: a.endTime,
+      lessonType: a.lessonType,
+      monthlyFee: a.monthlyFee
+    };
+  });
+
+  // Fetch student updates
+  const updates = (db.tutorDailyUpdates || [])
+    .filter(u => u.studentId === studentId && u.status === 'PUBLISHED')
+    .sort((a, b) => new Date(b.createdAt || b.updateDate) - new Date(a.createdAt || a.updateDate));
+
+  res.json({
+    success: true,
+    student: {
+      id: student.id,
+      studentName: student.studentName || student.fullName,
+      phone: student.phone,
+      parentPhone: student.parentPhone,
+      email: student.email,
+      class: student.class,
+      location: student.location,
+      learningRequirements: student.learningRequirements
+    },
+    assignedTutors,
+    classes: assignments,
+    recentUpdates: updates.slice(0, 5),
+    totalUpdates: updates.length
+  });
+});
+
+// GET /api/parent/tutor-updates
+app.get('/api/parent/tutor-updates', requireRole(['PARENT', 'ADMIN']), (req, res) => {
+  const studentId = req.user.studentId || req.query.studentId;
+  const updates = (db.tutorDailyUpdates || [])
+    .filter(u => u.studentId === studentId && u.status === 'PUBLISHED')
+    .sort((a, b) => new Date(b.createdAt || b.updateDate) - new Date(a.createdAt || a.updateDate));
+
+  // Compute stats
+  const now = new Date();
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const updatesThisWeek = updates.filter(u => new Date(u.updateDate || u.createdAt) >= oneWeekAgo);
+
+  res.json({
+    success: true,
+    updates,
+    total: updates.length,
+    latestUpdateDate: updates.length > 0 ? updates[0].updateDate : null,
+    updatesThisWeekCount: updatesThisWeek.length
+  });
+});
+
+// GET /api/parent/classes
+app.get('/api/parent/classes', requireRole(['PARENT', 'ADMIN']), (req, res) => {
+  const studentId = req.user.studentId || req.query.studentId;
+  const assignments = (db.tutorStudentAssignments || []).filter(a => a.studentId === studentId && a.status === 'ACTIVE');
+  const tutors = db.tutors || [];
+
+  const classes = assignments.map(a => {
+    const tutor = tutors.find(t => t.id === a.tutorId);
+    return {
+      id: a.id,
+      tutorName: tutor ? tutor.fullName : a.tutorName,
+      subject: a.subject,
+      class: a.class,
+      days: a.days || [],
+      startTime: a.startTime,
+      endTime: a.endTime,
+      location: a.location,
+      lessonType: a.lessonType
+    };
+  });
+
+  res.json({
+    success: true,
+    classes
+  });
+});
+
+// -------------------------------------------------------------------------
+// ADMIN TUTOR UPDATES APIS
+// -------------------------------------------------------------------------
+
+// GET /api/admin/tutor-updates/metrics
+app.get('/api/admin/tutor-updates/metrics', requireRole(['ADMIN']), (req, res) => {
+  const updates = db.tutorDailyUpdates || [];
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  const updatesToday = updates.filter(u => u.updateDate === todayStr || (u.createdAt && u.createdAt.slice(0, 10) === todayStr));
+  const tutorsPostedToday = new Set(updatesToday.map(u => u.tutorId)).size;
+  const studentsWithUpdates = new Set(updates.map(u => u.studentId).filter(Boolean)).size;
+
+  res.json({
+    success: true,
+    metrics: {
+      totalUpdates: updates.length,
+      updatesToday: updatesToday.length,
+      tutorsPostedToday,
+      studentsWithUpdates
+    }
+  });
+});
+
+// GET /api/admin/tutor-updates
+app.get('/api/admin/tutor-updates', requireRole(['ADMIN']), (req, res) => {
+  let updates = [...(db.tutorDailyUpdates || [])];
+  const { tutorId, studentId, subject, search, dateFrom, dateTo } = req.query;
+
+  if (tutorId) updates = updates.filter(u => u.tutorId === tutorId);
+  if (studentId) updates = updates.filter(u => u.studentId === studentId);
+  if (subject) updates = updates.filter(u => u.subject.toLowerCase() === subject.toLowerCase());
+  if (dateFrom) updates = updates.filter(u => u.updateDate >= dateFrom);
+  if (dateTo) updates = updates.filter(u => u.updateDate <= dateTo);
+  if (search) {
+    const q = search.toLowerCase();
+    updates = updates.filter(u =>
+      (u.tutorName && u.tutorName.toLowerCase().includes(q)) ||
+      (u.studentName && u.studentName.toLowerCase().includes(q)) ||
+      (u.subject && u.subject.toLowerCase().includes(q)) ||
+      (u.thought && u.thought.toLowerCase().includes(q)) ||
+      (u.topicsCovered && u.topicsCovered.toLowerCase().includes(q))
+    );
+  }
+
+  updates.sort((a, b) => new Date(b.createdAt || b.updateDate) - new Date(a.createdAt || a.updateDate));
+
+  res.json({
+    success: true,
+    updates,
+    total: updates.length
+  });
+});
+
+// PUT /api/admin/tutor-updates/:id/archive
+app.put('/api/admin/tutor-updates/:id/archive', requireRole(['ADMIN']), (req, res) => {
+  const update = (db.tutorDailyUpdates || []).find(u => u.id === req.params.id);
+  if (!update) return res.status(404).json({ success: false, error: 'Update not found' });
+  update.status = 'ARCHIVED';
+  update.updatedAt = new Date().toISOString();
+  saveDB(db);
+  res.json({ success: true, message: 'Update archived successfully.', update });
+});
+
+// DELETE /api/admin/tutor-updates/:id
+app.delete('/api/admin/tutor-updates/:id', requireRole(['ADMIN']), (req, res) => {
+  const index = (db.tutorDailyUpdates || []).findIndex(u => u.id === req.params.id);
+  if (index === -1) return res.status(404).json({ success: false, error: 'Update not found' });
+  db.tutorDailyUpdates.splice(index, 1);
+  saveDB(db);
+  res.json({ success: true, message: 'Update deleted successfully.' });
+});
+
 
 app.listen(PORT, () => {
   console.log('TutorConnect Server running on http://localhost:' + PORT);

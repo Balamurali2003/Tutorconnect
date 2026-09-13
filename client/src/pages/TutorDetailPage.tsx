@@ -943,7 +943,7 @@ export const TutorDetailPage: React.FC<TutorDetailPageProps> = ({ tutorId, onBac
           isOpen={showWhatsAppModal}
           onClose={() => setShowWhatsAppModal(false)}
           recipients={[tutor]}
-          defaultMessage={`Hello ${tutor.fullName},\n\nThis is TutorConnect Tuition Centre.\n\nWe are contacting you regarding your tutor application.\n\nPlease let us know your availability.\n\nThank you.`}
+          defaultMessage={`Hello ${tutor.fullName},\n\nThis is Charithra Learning Hub.\n\nWe are contacting you regarding your tutor application.\n\nPlease let us know your availability.\n\nThank you.`}
           onSuccess={() => {
             setShowWhatsAppModal(false);
             loadData();

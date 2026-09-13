@@ -1,7 +1,8 @@
+import { BrandLogo } from '../common/BrandLogo';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserRole } from '../../types';
-import { Search, Bell, User, Sparkles, CheckCheck } from 'lucide-react';
+import { Search, Bell, User, Sparkles, CheckCheck, LogOut } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const {
@@ -13,7 +14,8 @@ export const Navbar: React.FC = () => {
     handleMarkAllRead,
     globalSearch,
     setGlobalSearch,
-    setActiveTab
+    setActiveTab,
+    logout
   } = useApp();
 
   const [notifOpen, setNotifOpen] = useState(false);
@@ -22,8 +24,13 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="h-16 bg-white border-b border-slate-200/80 sticky top-0 z-20 px-6 flex items-center justify-between">
-      {/* Search Bar */}
-      <div className="flex-1 max-w-md relative">
+      {/* Brand Logo & Search Bar */}
+      <div className="flex items-center gap-3.5 flex-1 max-w-xl">
+        <BrandLogo size="xs" imageOnly className="shrink-0" />
+        <span className="hidden xl:inline text-xs font-extrabold text-slate-800 tracking-tight whitespace-nowrap">
+          Charithra Learning Hub
+        </span>
+        <div className="flex-1 relative">
         <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
         <input
           type="text"
@@ -32,10 +39,23 @@ export const Navbar: React.FC = () => {
           placeholder="Global search by tutor name, subject, ID, location..."
           className="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 hover:bg-slate-100/80 focus:bg-white rounded-xl border border-slate-200/80 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
         />
+        </div>
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        {/* View Marketing Website */}
+        <a
+          href="http://localhost:5173"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl transition shadow-xs"
+          title="Open Public Marketing Website"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+          <span>View Website 🌐</span>
+        </a>
+
         {/* Role Switcher */}
         <div className="flex items-center gap-2 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60">
           <span className="text-[11px] font-bold text-slate-500 uppercase px-2">Role:</span>
@@ -144,6 +164,15 @@ export const Navbar: React.FC = () => {
             <p className="text-[10px] text-emerald-600 font-semibold">{userRole} View</p>
           </div>
         </div>
+
+        {/* Logout Button */}
+        <button
+          onClick={logout}
+          title="Logout"
+          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+        >
+          <LogOut className="w-5 h-5" />
+        </button>
       </div>
     </header>
   );

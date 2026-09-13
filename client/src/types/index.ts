@@ -6,10 +6,15 @@ export type TutorStatus =
   | 'DOCUMENT_VERIFICATION'
   | 'DOCUMENT_APPROVED'
   | 'DOCUMENT_REJECTED'
+  | 'INTERVIEW_PENDING'
   | 'INTERVIEW_SCHEDULED'
   | 'INTERVIEW_SELECTED'
+  | 'INTERVIEW_FAILED'
+  | 'INTERVIEW_ON_HOLD'
   | 'INTERVIEW_REJECTED'
+  | 'DEMO_CLASS_PENDING'
   | 'DEMO_CLASS_SCHEDULED'
+  | 'DEMO_CLASS_COMPLETED'
   | 'DEMO_CLASS_PASSED'
   | 'DEMO_CLASS_FAILED'
   | 'PARENT_APPROVAL_PENDING'
@@ -88,9 +93,13 @@ export interface Tutor {
   homeTuitionAvailable?: string;
   preferredLocation: string;
   availableTiming: string;
+  availableDays?: string;
   expectedSalary: number;
   resume?: string;
   photo?: string;
+  notes?: string;
+  isDeleted?: boolean;
+  deletedAt?: string;
   priority: PriorityType;
   priorityScore?: number;
   priorityLevel?: PriorityLevel;
@@ -126,6 +135,34 @@ export interface Tutor {
   updatedAt?: string;
 }
 
+export interface TutorImportSummary {
+  totalRows: number;
+  valid: number;
+  duplicates: number;
+  invalid: number;
+  successfullyImported: number;
+  skippedDuplicates: number;
+  invalidRows: number;
+}
+
+export interface TutorImportResult {
+  success: boolean;
+  summary: TutorImportSummary;
+  validRecords: any[];
+  duplicateRecords: any[];
+  invalidRecords: any[];
+  errors: string[];
+}
+
+export interface ValidateTutorsResponse {
+  success: boolean;
+  tutors: Tutor[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export type DocumentType =
   | 'Resume'
   | 'Qualification Certificate'
@@ -145,6 +182,16 @@ export interface TutorDocument {
   updatedAt?: string;
 }
 
+export type DemoClassStatus =
+  | 'DEMO_CLASS_PENDING'
+  | 'DEMO_CLASS_SCHEDULED'
+  | 'DEMO_CLASS_COMPLETED'
+  | 'DEMO_CLASS_PASSED'
+  | 'DEMO_CLASS_FAILED'
+  | 'PENDING'
+  | 'SCHEDULED'
+  | 'COMPLETED';
+
 export interface TutorInterview {
   id: string;
   interviewId: string;
@@ -157,7 +204,9 @@ export interface TutorInterview {
   subjectKnowledgeRating: number;
   teachingAbilityRating: number;
   overallRating: number;
-  result: 'Pending' | 'Selected' | 'Rejected' | 'On Hold';
+  result: 'Pending' | 'SELECTED' | 'FAILED' | 'ON_HOLD' | 'Selected' | 'Rejected' | 'On Hold';
+  interviewResult?: 'SELECTED' | 'FAILED' | 'ON_HOLD' | string;
+  status?: string;
   comments: string;
 }
 
@@ -177,7 +226,7 @@ export interface DemoClass {
   adminRating: number;
   studentRating: number;
   parentRating: number;
-  status: 'PENDING' | 'SCHEDULED' | 'COMPLETED';
+  status: DemoClassStatus;
   result: 'Pending' | 'Passed' | 'Failed';
   comments: string;
   createdAt?: string;
@@ -558,3 +607,139 @@ export interface TutorWhatsAppDetailResponse {
   };
   messages: WhatsAppMessage[];
 }
+
+// =========================================================================
+// TUTOR-STUDENT ASSIGNMENT TYPES
+// =========================================================================
+
+export type AssignmentStatus = 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
+
+export interface TutorStudentAssignment {
+  id: string;
+  tutorId: string;
+  studentId: string;
+  subject: string;
+  class: string;
+  lessonType: 'Home Tuition' | 'Online Tuition' | 'Both' | string;
+  days: string[];
+  startTime: string;
+  endTime: string;
+  location: string;
+  monthlyFee: number;
+  hourlyFee?: number;
+  startDate: string;
+  status: AssignmentStatus;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  // Enriched presentation fields
+  tutor?: Tutor;
+  student?: Student;
+  tutorName?: string;
+  tutorPhone?: string;
+  tutorSubjects?: string[] | string;
+  tutorLocation?: string;
+  studentName?: string;
+  studentPhone?: string;
+  studentClass?: string;
+  studentLocation?: string;
+  parentPhone?: string;
+}
+
+export interface AssignmentMetrics {
+  totalAppointedTutors: number;
+  totalAssignedStudents: number;
+  activeAssignments: number;
+  unassignedStudents: number;
+  tutorsWithNoStudents: number;
+}
+
+export interface CreateAssignmentPayload {
+  tutorId: string;
+  studentId: string;
+  subject: string;
+  class?: string;
+  lessonType?: string;
+  days?: string[];
+  startTime?: string;
+  endTime?: string;
+  location?: string;
+  monthlyFee?: number;
+  hourlyFee?: number;
+  startDate: string;
+  notes?: string;
+}
+
+// =========================================================================
+// AUTHENTICATION & DAILY UPDATES TYPES
+// =========================================================================
+
+export interface AuthUser {
+  userId: string;
+  role: 'ADMIN' | 'TUTOR' | 'PARENT';
+  name: string;
+  username?: string;
+  fullName?: string;
+  studentName?: string;
+  tutorId?: string;
+  studentId?: string;
+  parentId?: string;
+  mobile?: string;
+  phone?: string;
+  email?: string;
+  class?: string;
+  status?: string;
+  subjects?: string[];
+  qualification?: string;
+  location?: string;
+}
+
+export interface LoginPayload {
+  role: 'Admin' | 'Tutor' | 'Parent';
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  token: string;
+  user: AuthUser;
+  redirectUrl?: string;
+  error?: string;
+}
+
+export interface TutorDailyUpdate {
+  id: string;
+  tutorId: string;
+  tutorName: string;
+  studentId?: string | null;
+  studentName: string;
+  subject: string;
+  updateDate: string;
+  thought: string;
+  topicsCovered?: string;
+  homework?: string;
+  studentProgress?: 'Excellent' | 'Good' | 'Average' | 'Needs Attention' | string;
+  classTiming?: string;
+  notes?: string;
+  imageUrl?: string | null;
+  status: 'PUBLISHED' | 'ARCHIVED';
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface TutorDashboardMetrics {
+  todayClassesCount: number;
+  assignedStudentsCount: number;
+  updatesTodayCount: number;
+  upcomingClassesCount: number;
+  totalUpdatesCount: number;
+}
+
+export interface AdminDailyUpdatesMetrics {
+  totalUpdates: number;
+  updatesToday: number;
+  tutorsPostedToday: number;
+  studentsWithUpdates: number;
+}
+

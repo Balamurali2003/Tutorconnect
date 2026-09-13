@@ -43,7 +43,7 @@ export const StatusBadge: React.FC<BadgeProps> = ({ status, priority, children, 
   const s = status ? status.toUpperCase() : '';
 
   // Green / Success: Validated, Approved, Selected, Active, Appointed, Passed
-  if (['VALIDATED', 'DOCUMENT_APPROVED', 'INTERVIEW_SELECTED', 'DEMO_CLASS_PASSED', 'PARENT_APPROVED', 'TUTOR_APPOINTED', 'ACTIVE', 'VERIFIED', 'PASSED'].includes(s)) {
+  if (['VALIDATED', 'DOCUMENT_APPROVED', 'INTERVIEW_SELECTED', 'DEMO_CLASS_PASSED', 'PARENT_APPROVED', 'TUTOR_APPOINTED', 'ACTIVE', 'VERIFIED', 'PASSED', 'SELECTED'].includes(s)) {
     return (
       <span className={`inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 ${sizeClasses}`}>
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -53,7 +53,7 @@ export const StatusBadge: React.FC<BadgeProps> = ({ status, priority, children, 
   }
 
   // Red / Danger: Rejected, Failed
-  if (['DOCUMENT_REJECTED', 'INTERVIEW_REJECTED', 'DEMO_CLASS_FAILED', 'PARENT_REJECTED', 'REJECTED', 'FAILED'].includes(s)) {
+  if (['DOCUMENT_REJECTED', 'INTERVIEW_FAILED', 'INTERVIEW_REJECTED', 'DEMO_CLASS_FAILED', 'PARENT_REJECTED', 'REJECTED', 'FAILED'].includes(s)) {
     return (
       <span className={`inline-flex items-center gap-1.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 ${sizeClasses}`}>
         <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
@@ -62,8 +62,18 @@ export const StatusBadge: React.FC<BadgeProps> = ({ status, priority, children, 
     );
   }
 
-  // Orange / Amber: Pending, Verification, Scheduled
-  if (['DOCUMENT_VERIFICATION', 'INTERVIEW_SCHEDULED', 'DEMO_CLASS_SCHEDULED', 'PARENT_APPROVAL_PENDING', 'PENDING'].includes(s)) {
+  // Purple / Indigo: Completed
+  if (['DEMO_CLASS_COMPLETED', 'COMPLETED'].includes(s)) {
+    return (
+      <span className={`inline-flex items-center gap-1.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 ${sizeClasses}`}>
+        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+        {children || s.replace(/_/g, ' ')}
+      </span>
+    );
+  }
+
+  // Orange / Amber: Pending, Verification, Scheduled, On Hold
+  if (['DOCUMENT_VERIFICATION', 'INTERVIEW_PENDING', 'INTERVIEW_SCHEDULED', 'INTERVIEW_ON_HOLD', 'ON_HOLD', 'DEMO_CLASS_PENDING', 'DEMO_CLASS_SCHEDULED', 'PARENT_APPROVAL_PENDING', 'PENDING'].includes(s)) {
     return (
       <span className={`inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 ${sizeClasses}`}>
         <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>

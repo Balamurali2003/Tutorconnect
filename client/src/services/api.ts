@@ -27,10 +27,48 @@ import {
   WhatsAppSettingsConfig,
   WhatsAppWebhookLog,
   WhatsAppApiLog,
-  TutorWhatsAppDetailResponse
+  TutorWhatsAppDetailResponse,
+  TutorStudentAssignment,
+  AssignmentMetrics,
+  CreateAssignmentPayload,
+  ValidateTutorsResponse,
+  TutorImportResult,
+  AuthUser,
+  LoginPayload,
+  LoginResponse,
+  TutorDailyUpdate,
+  TutorDashboardMetrics,
+  AdminDailyUpdatesMetrics
 } from '../types';
 
 const API_BASE = '/api';
+
+let authToken: string | null = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+  if (typeof window !== 'undefined') {
+    if (token) {
+      localStorage.setItem('auth_token', token);
+    } else {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+    }
+  }
+}
+
+export function getAuthToken(): string | null {
+  if (!authToken && typeof window !== 'undefined') {
+    authToken = localStorage.getItem('auth_token');
+  }
+  return authToken;
+}
+
+export function getAuthHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+}
+
 
 export async function fetchStats(): Promise<{
   metrics: DashboardMetrics;
@@ -87,15 +125,45 @@ export async function updateTutor(id: string, data: Partial<Tutor>): Promise<Tut
   return res.json();
 }
 
-export async function deleteTutor(id: string): Promise<{ success: boolean }> {
-  const res = await fetch(`${API_BASE}/tutors/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error('Failed to delete tutor');
-  return res.json();
+export async function deleteTutor(id: string): Promise<{ success: boolean; message?: string }> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : authToken;
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}/tutors/${id}`, {
+    method: 'DELETE',
+    headers
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.message || data.error || 'Unable to delete tutor. No data was removed.');
+  }
+  return data;
 }
 
 export async function validateTutor(id: string): Promise<{ success: boolean; tutor: Tutor; message: string }> {
   const res = await fetch(`${API_BASE}/tutors/${id}/validate`, { method: 'POST' });
   if (!res.ok) throw new Error('Failed to validate tutor');
+  return res.json();
+}
+
+export async function fetchValidateTutors(params?: Record<string, string>): Promise<ValidateTutorsResponse> {
+  const query = params ? new URLSearchParams(params).toString() : '';
+  const res = await fetch(`${API_BASE}/tutors/validate?${query}`);
+  if (!res.ok) throw new Error('Failed to fetch validate tutors');
+  return res.json();
+}
+
+export async function importTutorsExcel(rows: any[], commit: boolean = true): Promise<TutorImportResult> {
+  const res = await fetch(`${API_BASE}/tutors/import`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rows, commit })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Import failed' }));
+    throw new Error(err.error || 'Failed to import tutors');
+  }
   return res.json();
 }
 
@@ -140,27 +208,55 @@ export async function moveToInterview(tutorId: string, data?: any): Promise<{ su
   return res.json();
 }
 
-export async function submitInterviewEvaluation(interviewId: string, data: Partial<TutorInterview>): Promise<{ success: boolean; interview: TutorInterview; tutor: Tutor }> {
+export async function submitInterviewEvaluation(
+  interviewId: string,
+  data: Partial<TutorInterview> & { tutorId?: string }
+): Promise<{ success: boolean; interview: TutorInterview; tutor: Tutor; message?: string; demo?: DemoClass }> {
   const res = await fetch(`${API_BASE}/interviews/${interviewId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
-  if (!res.ok) throw new Error('Failed to update interview evaluation');
-  return res.json();
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || json.success === false) {
+    throw new Error(json.message || json.error || 'Failed to update interview evaluation');
+  }
+  return json;
 }
 
-export async function moveToDemoClass(tutorId: string, data?: any): Promise<{ success: boolean; tutor: Tutor; demo: DemoClass }> {
+export async function moveToDemoClass(tutorId: string, data?: any): Promise<{ success: boolean; tutor: Tutor; demo: DemoClass; message?: string }> {
   const res = await fetch(`${API_BASE}/tutors/${tutorId}/move-to-demo`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data || {})
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Failed to move to demo class' }));
-    throw new Error(err.error || 'Failed to move to demo class');
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || json.success === false) {
+    throw new Error(json.message || json.error || 'Failed to move to demo class');
   }
-  return res.json();
+  return json;
+}
+
+export async function createDemoClass(data: {
+  tutorId: string;
+  studentId?: string | null;
+  subject?: string | null;
+  class?: string | null;
+  date?: string | null;
+  time?: string | null;
+  location?: string | null;
+  comments?: string;
+}): Promise<{ success: boolean; demo?: DemoClass; tutor?: Tutor; message?: string }> {
+  const res = await fetch(`${API_BASE}/demos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || json.success === false) {
+    throw new Error(json.message || json.error || 'Failed to create demo class');
+  }
+  return json;
 }
 
 export async function fetchInterviews(): Promise<{ interviews: TutorInterview[] }> {
@@ -826,3 +922,302 @@ export async function fetchTutorWhatsAppDetails(tutorId: string): Promise<TutorW
   if (!res.ok) throw new Error('Failed to fetch tutor WhatsApp details');
   return res.json();
 }
+
+// =========================================================================
+// TUTOR-STUDENT ASSIGNMENT SERVICES
+// =========================================================================
+
+export async function fetchTutorStudentAssignments(params?: Record<string, string>): Promise<{
+  success: boolean;
+  assignments: TutorStudentAssignment[];
+  total: number;
+}> {
+  const query = params ? new URLSearchParams(params).toString() : '';
+  const res = await fetch(`${API_BASE}/tutor-student-assignments?${query}`);
+  if (!res.ok) throw new Error('Failed to fetch tutor-student assignments');
+  return res.json();
+}
+
+export async function fetchAssignmentMetrics(): Promise<{
+  success: boolean;
+  metrics: AssignmentMetrics;
+}> {
+  const res = await fetch(`${API_BASE}/tutor-student-assignments/metrics`);
+  if (!res.ok) throw new Error('Failed to fetch assignment metrics');
+  return res.json();
+}
+
+export async function createTutorStudentAssignment(payload: CreateAssignmentPayload): Promise<{
+  success: boolean;
+  message: string;
+  assignment: TutorStudentAssignment;
+  warnings?: string[];
+}> {
+  const res = await fetch(`${API_BASE}/tutor-student-assignments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed to assign student' }));
+    throw new Error(err.error || 'Failed to assign student');
+  }
+  return res.json();
+}
+
+export async function updateTutorStudentAssignment(
+  id: string,
+  payload: Partial<CreateAssignmentPayload> & { status?: string }
+): Promise<{
+  success: boolean;
+  message: string;
+  assignment: TutorStudentAssignment;
+}> {
+  const res = await fetch(`${API_BASE}/tutor-student-assignments/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed to update assignment' }));
+    throw new Error(err.error || 'Failed to update assignment');
+  }
+  return res.json();
+}
+
+export async function updateAssignmentStatus(
+  id: string,
+  status: string
+): Promise<{
+  success: boolean;
+  message: string;
+  assignment: TutorStudentAssignment;
+}> {
+  const res = await fetch(`${API_BASE}/tutor-student-assignments/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed to update assignment status' }));
+    throw new Error(err.error || 'Failed to update assignment status');
+  }
+  return res.json();
+}
+
+// =========================================================================
+// AUTHENTICATION & PORTALS API FUNCTIONS
+// =========================================================================
+
+export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to authenticate');
+  }
+  setAuthToken(data.token);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('auth_user', JSON.stringify(data.user));
+  }
+  return data;
+}
+
+export async function fetchCurrentUser(): Promise<AuthUser> {
+  const res = await fetch(`${API_BASE}/auth/me`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) {
+    throw new Error('Not authenticated');
+  }
+  const data = await res.json();
+  return data.user;
+}
+
+export function logoutUser(): void {
+  setAuthToken(null);
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+  }
+}
+
+export async function sendForgotPassword(role: string, username: string): Promise<{ success: boolean; message: string }> {
+  const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role, username })
+  });
+  return res.json();
+}
+
+// -------------------------------------------------------------------------
+// TUTOR PORTAL APIS
+// -------------------------------------------------------------------------
+
+export async function fetchTutorDashboardMetrics(): Promise<{ success: boolean; metrics: TutorDashboardMetrics; todayClasses: any[]; recentUpdates: TutorDailyUpdate[] }> {
+  const res = await fetch(`${API_BASE}/tutor/dashboard-metrics`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch tutor dashboard metrics');
+  return res.json();
+}
+
+export async function fetchTutorStudents(): Promise<{ success: boolean; students: any[] }> {
+  const res = await fetch(`${API_BASE}/tutor/students`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch assigned students');
+  return res.json();
+}
+
+export async function fetchTutorClasses(): Promise<{ success: boolean; classes: any[] }> {
+  const res = await fetch(`${API_BASE}/tutor/classes`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch classes');
+  return res.json();
+}
+
+export async function fetchTutorDailyUpdates(filters?: { studentId?: string; subject?: string; date?: string }): Promise<{ success: boolean; updates: TutorDailyUpdate[]; total: number }> {
+  const params = new URLSearchParams();
+  if (filters?.studentId) params.append('studentId', filters.studentId);
+  if (filters?.subject) params.append('subject', filters.subject);
+  if (filters?.date) params.append('date', filters.date);
+
+  const res = await fetch(`${API_BASE}/tutor/daily-updates?${params.toString()}`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch tutor daily updates');
+  return res.json();
+}
+
+export async function createTutorDailyUpdate(formData: FormData): Promise<{ success: boolean; update: TutorDailyUpdate; message: string }> {
+  const res = await fetch(`${API_BASE}/tutor/daily-updates`, {
+    method: 'POST',
+    headers: { ...getAuthHeaders() }, // Multer handles multipart boundary automatically
+    body: formData
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to publish daily update');
+  return data;
+}
+
+export async function updateTutorDailyUpdate(id: string, formData: FormData): Promise<{ success: boolean; update: TutorDailyUpdate; message: string }> {
+  const res = await fetch(`${API_BASE}/tutor/daily-updates/${id}`, {
+    method: 'PUT',
+    headers: { ...getAuthHeaders() },
+    body: formData
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to update daily update');
+  return data;
+}
+
+export async function deleteTutorDailyUpdate(id: string): Promise<{ success: boolean; message: string }> {
+  const res = await fetch(`${API_BASE}/tutor/daily-updates/${id}`, {
+    method: 'DELETE',
+    headers: { ...getAuthHeaders() }
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to delete daily update');
+  return data;
+}
+
+// -------------------------------------------------------------------------
+// PARENT PORTAL APIS
+// -------------------------------------------------------------------------
+
+export async function fetchParentDashboard(): Promise<{
+  success: boolean;
+  student: any;
+  assignedTutors: any[];
+  classes: any[];
+  recentUpdates: TutorDailyUpdate[];
+  totalUpdates: number;
+}> {
+  const res = await fetch(`${API_BASE}/parent/dashboard`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch parent dashboard');
+  return res.json();
+}
+
+export async function fetchParentTutorUpdates(): Promise<{
+  success: boolean;
+  updates: TutorDailyUpdate[];
+  total: number;
+  latestUpdateDate: string | null;
+  updatesThisWeekCount: number;
+}> {
+  const res = await fetch(`${API_BASE}/parent/tutor-updates`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch parent tutor updates');
+  return res.json();
+}
+
+export async function fetchParentClasses(): Promise<{ success: boolean; classes: any[] }> {
+  const res = await fetch(`${API_BASE}/parent/classes`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch classes');
+  return res.json();
+}
+
+// -------------------------------------------------------------------------
+// ADMIN TUTOR UPDATES APIS
+// -------------------------------------------------------------------------
+
+export async function fetchAdminTutorUpdates(params?: {
+  tutorId?: string;
+  studentId?: string;
+  subject?: string;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}): Promise<{ success: boolean; updates: TutorDailyUpdate[]; total: number }> {
+  const q = new URLSearchParams();
+  if (params?.tutorId) q.append('tutorId', params.tutorId);
+  if (params?.studentId) q.append('studentId', params.studentId);
+  if (params?.subject) q.append('subject', params.subject);
+  if (params?.search) q.append('search', params.search);
+  if (params?.dateFrom) q.append('dateFrom', params.dateFrom);
+  if (params?.dateTo) q.append('dateTo', params.dateTo);
+
+  const res = await fetch(`${API_BASE}/admin/tutor-updates?${q.toString()}`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch admin tutor updates');
+  return res.json();
+}
+
+export async function fetchAdminDailyUpdatesMetrics(): Promise<{ success: boolean; metrics: AdminDailyUpdatesMetrics }> {
+  const res = await fetch(`${API_BASE}/admin/tutor-updates/metrics`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to fetch admin tutor updates metrics');
+  return res.json();
+}
+
+export async function archiveAdminTutorUpdate(id: string): Promise<{ success: boolean; message: string; update: TutorDailyUpdate }> {
+  const res = await fetch(`${API_BASE}/admin/tutor-updates/${id}/archive`, {
+    method: 'PUT',
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to archive update');
+  return res.json();
+}
+
+export async function deleteAdminTutorUpdate(id: string): Promise<{ success: boolean; message: string }> {
+  const res = await fetch(`${API_BASE}/admin/tutor-updates/${id}`, {
+    method: 'DELETE',
+    headers: { ...getAuthHeaders() }
+  });
+  if (!res.ok) throw new Error('Failed to delete update');
+  return res.json();
+}
+

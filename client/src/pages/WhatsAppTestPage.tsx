@@ -23,7 +23,7 @@ export const WhatsAppTestPage: React.FC = () => {
   const { addToast } = useApp();
   const [stats, setStats] = useState<WhatsAppDashboardStats | null>(null);
   const [testNumber, setTestNumber] = useState('+919876543210');
-  const [testMessage, setTestMessage] = useState('Hello from TutorConnect diagnostic test!');
+  const [testMessage, setTestMessage] = useState('Hello from Charithra Learning Hub diagnostic test!');
   const [sendingMessage, setSendingMessage] = useState(false);
   const [simulatingWebhook, setSimulatingWebhook] = useState(false);
   const [testingConnection, setTestingConnection] = useState(false);

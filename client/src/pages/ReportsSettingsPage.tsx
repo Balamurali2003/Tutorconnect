@@ -35,8 +35,8 @@ export const ReportsPage: React.FC = () => {
 
 export const SettingsPage: React.FC = () => {
   const { userRole, setUserRole, addToast, triggerRefresh } = useApp();
-  const [centreName, setCentreName] = useState('TutorConnect Elite Academy');
-  const [contactEmail, setContactEmail] = useState('contact@tutorconnect.org');
+  const [centreName, setCentreName] = useState('Charithra Learning Hub');
+  const [contactEmail, setContactEmail] = useState('contact@charithralearninghub.com');
   const [resetting, setResetting] = useState(false);
 
   // Priority Weights Configuration State

@@ -1,3 +1,4 @@
+import { BrandLogo } from '../common/BrandLogo';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -26,11 +27,13 @@ import {
   Inbox,
   Send,
   Terminal,
-  Activity
+  Activity,
+  BookOpen,
+  LogOut
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
-  const { activeTab, setActiveTab } = useApp();
+  const { activeTab, setActiveTab, logout } = useApp();
   const [collapsed, setCollapsed] = useState(false);
   const [tutorOpen, setTutorOpen] = useState(true);
   const [communicationOpen, setCommunicationOpen] = useState(true);
@@ -70,28 +73,18 @@ export const Sidebar: React.FC = () => {
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100">
+      <div className="h-20 flex items-center justify-between px-4 border-b border-slate-100/90 bg-white">
         {!collapsed && (
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-primary-500 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/20">
-              <GraduationCap className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="font-extrabold text-base tracking-tight text-slate-900">
-                Tutor<span className="text-indigo-600">Connect</span>
-              </h1>
-              <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Tuition Centre CRM</p>
-            </div>
-          </div>
+          <BrandLogo size="sm" variant="light" subtitle="Admin Dashboard" />
         )}
         {collapsed && (
-          <div className="mx-auto w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white">
-            <GraduationCap className="w-5 h-5" />
+          <div className="mx-auto">
+            <BrandLogo size="xs" variant="light" imageOnly />
           </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+          className="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
           title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
           <Menu className="w-5 h-5" />
@@ -123,8 +116,9 @@ export const Sidebar: React.FC = () => {
               {navItem('high-priority', 'High Priority', <span className="text-rose-500 font-bold">🔴</span>, 'Score 80-100', 'bg-rose-100 text-rose-800')}
               {navItem('medium-priority', 'Medium Priority', <span className="text-amber-500 font-bold">🟠</span>, 'Score 60-79', 'bg-amber-100 text-amber-800')}
               {navItem('low-priority', 'Low Priority', <span className="text-slate-400 font-bold">🟡</span>, 'Score 0-59', 'bg-slate-100 text-slate-700')}
-              {navItem('validated-tutors', 'Validated Tutors', <ShieldCheck className="w-4 h-4 text-indigo-600" />)}
+              {navItem('validated-tutors', 'Validate Tutor', <ShieldCheck className="w-4 h-4 text-indigo-600" />)}
               {navItem('appointed-tutors', 'Appointed Tutors', <Award className="w-4 h-4 text-emerald-600" />)}
+              {navItem('admin-tutor-updates', 'Tutor Daily Updates', <BookOpen className="w-4 h-4 text-teal-600" />)}
               {navItem('whatsapp-history', 'WhatsApp History', <History className="w-4 h-4 text-emerald-600" />)}
             </div>
           )}
@@ -257,6 +251,24 @@ export const Sidebar: React.FC = () => {
             </div>
             <span className="text-[10px] text-slate-400 font-mono">v2.4 Pro</span>
           </div>
+
+          <a
+            href="http://localhost:5173"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 transition-all cursor-pointer shadow-xs"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            <span>View Live Website 🌐</span>
+          </a>
+
+          <button
+            onClick={logout}
+            className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-all cursor-pointer"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Logout</span>
+          </button>
         </div>
       )}
     </aside>

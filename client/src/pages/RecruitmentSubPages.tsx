@@ -41,26 +41,34 @@ import { WhatsAppComposerModal } from '../components/whatsapp/WhatsAppComposerMo
  * ----------------------------------------------------------- */
 export const InterviewProcessPage: React.FC<{ onSelectTutor: (tutor: Tutor) => void }> = ({ onSelectTutor }) => {
   const { addToast, refreshTrigger, setActiveTab } = useApp();
+  const [tab, setTab] = useState<'pending' | 'selected' | 'on_hold' | 'failed' | 'all'>('pending');
   const [tutors, setTutors] = useState<Tutor[]>([]);
+  const [interviews, setInterviews] = useState<TutorInterview[]>([]);
   const [activeInterview, setActiveInterview] = useState<TutorInterview | null>(null);
   const [activeTutor, setActiveTutor] = useState<Tutor | null>(null);
   const [evaluating, setEvaluating] = useState(false);
-  const [whatsAppApprovalTutor, setWhatsAppApprovalTutor] = useState<Tutor | null>(null);
   const [whatsAppTutor, setWhatsAppTutor] = useState<Tutor | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const res = await fetchTutors();
-      const interviewList = (res.tutors || []).filter(t =>
+      const [tutorRes, interviewRes] = await Promise.all([
+        fetchTutors(),
+        fetchInterviews()
+      ]);
+      const allTutors: Tutor[] = tutorRes.tutors || [];
+      const allInterviews: TutorInterview[] = interviewRes.interviews || [];
+      setInterviews(allInterviews);
+
+      const interviewList = allTutors.filter(t =>
         t.status.startsWith('INTERVIEW_') ||
         t.status === 'DOCUMENT_APPROVED' ||
-        t.status === 'DEMO_CLASS_SCHEDULED'
+        allInterviews.some(i => i.tutorId === t.id)
       );
       setTutors(interviewList);
     } catch (err) {
-      console.error(err);
+      console.error('Error loading interview data:', err);
     } finally {
       setLoading(false);
     }
@@ -77,27 +85,74 @@ export const InterviewProcessPage: React.FC<{ onSelectTutor: (tutor: Tutor) => v
       if (detail.interviews && detail.interviews.length > 0) {
         setActiveInterview(detail.interviews[0]);
       } else {
-        setActiveInterview({
-          id: 'int-' + t.id,
-          interviewId: 'INT-' + t.tutorId,
-          tutorId: t.id,
-          date: new Date().toISOString().split('T')[0],
-          time: '04:00 PM',
-          interviewer: 'Academic Panel Lead',
-          type: 'Online',
-          communicationRating: 4,
-          subjectKnowledgeRating: 4,
-          teachingAbilityRating: 4,
-          overallRating: 4.0,
-          result: 'Selected',
-          comments: ''
-        });
+        const existingInv = interviews.find(i => i.tutorId === t.id);
+        if (existingInv) {
+          setActiveInterview(existingInv);
+        } else {
+          setActiveInterview({
+            id: 'int-' + t.id,
+            interviewId: 'INT-' + t.tutorId,
+            tutorId: t.id,
+            date: new Date().toISOString().split('T')[0],
+            time: '04:00 PM',
+            interviewer: 'Academic Panel Lead',
+            type: 'Online',
+            communicationRating: 4,
+            subjectKnowledgeRating: 4,
+            teachingAbilityRating: 4,
+            overallRating: 4.0,
+            result: 'SELECTED',
+            comments: ''
+          });
+        }
       }
       setEvaluating(true);
     } catch (err: any) {
       addToast('error', 'Error', err.message);
     }
   };
+
+  const getInterviewResult = (t: Tutor) => {
+    const inv = interviews.find(i => i.tutorId === t.id);
+    return (inv?.result || inv?.interviewResult || (t as any).interviewResult || '').toUpperCase();
+  };
+
+  const pendingTutors = tutors.filter(t => {
+    const r = getInterviewResult(t);
+    return t.status !== 'INTERVIEW_SELECTED' &&
+           t.status !== 'INTERVIEW_FAILED' &&
+           t.status !== 'INTERVIEW_ON_HOLD' &&
+           r !== 'SELECTED' &&
+           r !== 'FAILED' &&
+           r !== 'REJECTED' &&
+           r !== 'ON_HOLD';
+  });
+
+  const selectedTutors = tutors.filter(t => {
+    const r = getInterviewResult(t);
+    return t.status === 'INTERVIEW_SELECTED' || r === 'SELECTED';
+  });
+
+  const onHoldTutors = tutors.filter(t => {
+    const r = getInterviewResult(t);
+    return t.status === 'INTERVIEW_ON_HOLD' || r === 'ON_HOLD';
+  });
+
+  const failedTutors = tutors.filter(t => {
+    const r = getInterviewResult(t);
+    return t.status === 'INTERVIEW_FAILED' || r === 'FAILED' || r === 'REJECTED';
+  });
+
+  const displayedTutors =
+    tab === 'pending'
+      ? pendingTutors
+      : tab === 'selected'
+      ? selectedTutors
+      : tab === 'on_hold'
+      ? onHoldTutors
+      : tab === 'failed'
+      ? failedTutors
+      : tutors;
 
   return (
     <div className="space-y-6 pb-12">
@@ -117,6 +172,32 @@ export const InterviewProcessPage: React.FC<{ onSelectTutor: (tutor: Tutor) => v
         </button>
       </div>
 
+      {/* 5 Required Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 overflow-x-auto">
+        {[
+          { id: 'pending', label: '1. Pending Evaluation', count: pendingTutors.length, color: 'text-amber-600 bg-amber-50' },
+          { id: 'selected', label: '2. Selected', count: selectedTutors.length, color: 'text-emerald-600 bg-emerald-50' },
+          { id: 'on_hold', label: '3. On Hold', count: onHoldTutors.length, color: 'text-blue-600 bg-blue-50' },
+          { id: 'failed', label: '4. Failed', count: failedTutors.length, color: 'text-rose-600 bg-rose-50' },
+          { id: 'all', label: '5. All Interviews', count: tutors.length, color: 'text-slate-600 bg-slate-100' }
+        ].map(item => (
+          <button
+            key={item.id}
+            onClick={() => setTab(item.id as any)}
+            className={`flex items-center gap-2 px-4 py-3 text-xs font-bold whitespace-nowrap border-b-2 transition-all ${
+              tab === item.id
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <span>{item.label}</span>
+            <span className={`px-2 py-0.5 rounded-full text-[11px] font-black ${item.color}`}>
+              {item.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
@@ -130,47 +211,104 @@ export const InterviewProcessPage: React.FC<{ onSelectTutor: (tutor: Tutor) => v
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {tutors.length === 0 ? (
+            {displayedTutors.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-8 text-center text-xs text-slate-400">
-                  No tutors in interview queue.
+                  {tab === 'pending'
+                    ? 'No candidates waiting for evaluation.'
+                    : tab === 'selected'
+                    ? 'No tutors currently selected in interview.'
+                    : tab === 'on_hold'
+                    ? 'No tutors placed on hold.'
+                    : tab === 'failed'
+                    ? 'No tutors failed the interview round.'
+                    : 'No tutors found in interview queue.'}
                 </td>
               </tr>
             ) : (
-              tutors.map(t => (
-                <tr key={t.id} className="hover:bg-slate-50">
-                  <td className="py-3 px-4 flex items-center gap-3">
-                    <img src={t.photo} alt={t.fullName} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
-                    <div>
-                      <span className="font-bold text-slate-900 block">{t.fullName}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">{t.tutorId}</span>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-xs font-semibold text-slate-700">{t.qualification}</td>
-                  <td className="py-3 px-4 text-xs text-slate-600">{t.subjects.join(', ')}</td>
-                  <td className="py-3 px-4 text-xs text-slate-600">{t.preferredLocation}</td>
-                  <td className="py-3 px-4"><StatusBadge status={t.status} size="sm" /></td>
-                  <td className="py-3 px-4 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => setWhatsAppTutor(t)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 rounded-xl shadow-2xs transition-all"
-                        title="Send WhatsApp interview schedule to tutor"
-                      >
-                        <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>WhatsApp Tutor</span>
-                      </button>
+              displayedTutors.map(t => {
+                const isSelected = t.status === 'INTERVIEW_SELECTED' || getInterviewResult(t) === 'SELECTED';
+                const isFailed = t.status === 'INTERVIEW_FAILED' || getInterviewResult(t) === 'FAILED' || getInterviewResult(t) === 'REJECTED';
+                const isOnHold = t.status === 'INTERVIEW_ON_HOLD' || getInterviewResult(t) === 'ON_HOLD';
 
-                      <button
-                        onClick={() => handleOpenEvaluation(t)}
-                        className="px-3.5 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition-all active:scale-95"
-                      >
-                        ACTION &rarr; EVALUATE INTERVIEW
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+                return (
+                  <tr key={t.id} className="hover:bg-slate-50">
+                    <td className="py-3 px-4 flex items-center gap-3">
+                      <img src={t.photo} alt={t.fullName} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
+                      <div>
+                        <span className="font-bold text-slate-900 block">{t.fullName}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{t.tutorId}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-xs font-semibold text-slate-700">{t.qualification}</td>
+                    <td className="py-3 px-4 text-xs text-slate-600">{t.subjects.join(', ')}</td>
+                    <td className="py-3 px-4 text-xs text-slate-600">{t.preferredLocation}</td>
+                    <td className="py-3 px-4"><StatusBadge status={t.status} size="sm" /></td>
+                    <td className="py-3 px-4 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        {isSelected ? (
+                          <>
+                            <button
+                              onClick={() => setActiveTab('recruitment-demo')}
+                              className="px-3 py-1.5 text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 rounded-xl transition-all"
+                            >
+                              View in Demo Classes &rarr;
+                            </button>
+                            <button
+                              onClick={() => handleOpenEvaluation(t)}
+                              className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all"
+                            >
+                              Re-Evaluate
+                            </button>
+                          </>
+                        ) : isFailed ? (
+                          <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded-xl">
+                              Interview Failed
+                            </span>
+                            <button
+                              onClick={() => handleOpenEvaluation(t)}
+                              className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all"
+                            >
+                              Re-Evaluate
+                            </button>
+                          </div>
+                        ) : isOnHold ? (
+                          <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl">
+                              On Hold
+                            </span>
+                            <button
+                              onClick={() => handleOpenEvaluation(t)}
+                              className="px-3 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition-all"
+                            >
+                              Evaluate Now
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => setWhatsAppTutor(t)}
+                              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 rounded-xl shadow-2xs transition-all"
+                              title="Send WhatsApp interview schedule to tutor"
+                            >
+                              <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>WhatsApp</span>
+                            </button>
+
+                            <button
+                              onClick={() => handleOpenEvaluation(t)}
+                              className="px-3.5 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition-all active:scale-95"
+                            >
+                              ACTION &rarr; EVALUATE INTERVIEW
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -192,7 +330,16 @@ export const InterviewProcessPage: React.FC<{ onSelectTutor: (tutor: Tutor) => v
           isOpen={!!whatsAppTutor}
           onClose={() => setWhatsAppTutor(null)}
           recipients={[whatsAppTutor]}
-          defaultMessage={`Hello ${whatsAppTutor.fullName},\n\nYour interview with TutorConnect Tuition Centre has been scheduled.\n\nDate: {{interview_date}}\nTime: {{interview_time}}\n\nPlease be available at the scheduled time.\n\nThank you.`}
+          defaultMessage={`Hello ${whatsAppTutor.fullName},
+
+Your interview with Charithra Learning Hub has been scheduled.
+
+Date: {{interview_date}}
+Time: {{interview_time}}
+
+Please be available at the scheduled time.
+
+Thank you.`}
           onSuccess={() => {
             setWhatsAppTutor(null);
             loadData();
@@ -202,7 +349,6 @@ export const InterviewProcessPage: React.FC<{ onSelectTutor: (tutor: Tutor) => v
     </div>
   );
 };
-
 /* -------------------------------------------------------------
  * 2. Demo Classes Page (With 5 Required Tabs: Pending, Scheduled, Completed, Passed, Failed)
  * ----------------------------------------------------------- */
@@ -241,13 +387,23 @@ export const DemoClassesPage: React.FC<{ onSelectTutor: (tutor: Tutor) => void }
     loadData();
   }, [refreshTrigger]);
 
+  // Helper to check if tutor failed interview
+  const isFailedInterview = (t: Tutor | undefined, d?: DemoClass) => {
+    if (!t) return false;
+    if (t.status === 'INTERVIEW_FAILED' || (t as any).interviewResult === 'FAILED') return true;
+    const inv = d?.interview;
+    if (inv && (inv.result === 'FAILED' || inv.interviewResult === 'FAILED' || inv.result === 'Rejected')) return true;
+    return false;
+  };
+
   // Tab 1: Pending Demo Classes
   const pendingDemos: { demo: DemoClass | null; tutor: Tutor }[] = [];
 
   tutors.forEach(t => {
+    if (isFailedInterview(t)) return;
     const demo = demos.find(d => d.tutorId === t.id);
     const isEligibleTutorStatus = ['DEMO_CLASS_SCHEDULED', 'DEMO_CLASS_PENDING', 'INTERVIEW_SELECTED'].includes(t.status);
-    const isPendingDemoStatus = demo && (demo.status === 'PENDING' || (!demo.date && demo.result === 'Pending'));
+    const isPendingDemoStatus = demo && (demo.status === 'DEMO_CLASS_PENDING' || demo.status === 'PENDING' || (!demo.date && demo.result === 'Pending'));
 
     if (isPendingDemoStatus || (isEligibleTutorStatus && (!demo || !demo.date))) {
       if (!pendingDemos.some(p => p.tutor.id === t.id)) {
@@ -257,31 +413,43 @@ export const DemoClassesPage: React.FC<{ onSelectTutor: (tutor: Tutor) => void }
   });
 
   demos.forEach(d => {
-    if (d.status === 'PENDING' || (!d.date && d.result === 'Pending')) {
-      const t = d.tutor || tutors.find(item => item.id === d.tutorId);
-      if (t && !pendingDemos.some(p => p.tutor.id === t.id)) {
+    const t = d.tutor || tutors.find(item => item.id === d.tutorId);
+    if (!t || isFailedInterview(t, d)) return;
+    if (d.status === 'DEMO_CLASS_PENDING' || d.status === 'PENDING' || (!d.date && d.result === 'Pending')) {
+      if (!pendingDemos.some(p => p.tutor.id === t.id)) {
         pendingDemos.push({ demo: d, tutor: t });
       }
     }
   });
 
   // Tab 2: Scheduled
-  const scheduledDemos = demos.filter(d =>
-    (d.status === 'SCHEDULED' || (d.date && d.result === 'Pending')) &&
-    d.result !== 'Passed' &&
-    d.result !== 'Failed'
-  );
+  const scheduledDemos = demos.filter(d => {
+    const t = d.tutor || tutors.find(item => item.id === d.tutorId);
+    if (isFailedInterview(t, d)) return false;
+    return (d.status === 'DEMO_CLASS_SCHEDULED' || d.status === 'SCHEDULED' || (d.date && d.result === 'Pending')) &&
+           d.result !== 'Passed' && d.result !== 'Failed';
+  });
 
   // Tab 3: Completed
-  const completedDemos = demos.filter(d =>
-    d.status === 'COMPLETED' || d.result === 'Passed' || d.result === 'Failed'
-  );
+  const completedDemos = demos.filter(d => {
+    const t = d.tutor || tutors.find(item => item.id === d.tutorId);
+    if (isFailedInterview(t, d)) return false;
+    return d.status === 'DEMO_CLASS_COMPLETED' || d.status === 'COMPLETED' || d.result === 'Passed' || d.result === 'Failed';
+  });
 
   // Tab 4: Passed
-  const passedDemos = demos.filter(d => d.result === 'Passed');
+  const passedDemos = demos.filter(d => {
+    const t = d.tutor || tutors.find(item => item.id === d.tutorId);
+    if (isFailedInterview(t, d)) return false;
+    return d.status === 'DEMO_CLASS_PASSED' || d.result === 'Passed';
+  });
 
   // Tab 5: Failed
-  const failedDemos = demos.filter(d => d.result === 'Failed');
+  const failedDemos = demos.filter(d => {
+    const t = d.tutor || tutors.find(item => item.id === d.tutorId);
+    if (isFailedInterview(t, d)) return false;
+    return d.status === 'DEMO_CLASS_FAILED' || d.result === 'Failed';
+  });
 
   return (
     <div className="space-y-6 pb-12">
@@ -777,7 +945,7 @@ export const DemoClassesPage: React.FC<{ onSelectTutor: (tutor: Tutor) => void }
             demo_time: whatsAppDemoItem.demo?.time || whatsAppDemoItem.demo?.demoTime || '05:00 PM',
             location: whatsAppDemoItem.demo?.location || whatsAppDemoItem.tutor.preferredLocation || 'Student Residence'
           }}
-          defaultMessage={`Hello ${whatsAppDemoItem.tutor.fullName},\n\nCongratulations! You have successfully cleared the interview stage.\n\nYour demo class has been scheduled.\n\nStudent: {{student_name}}\nSubject: {{subject}}\nDate: {{demo_date}}\nTime: {{demo_time}}\nLocation: {{location}}\n\nPlease be available on time.\n\nThank you,\nTutorConnect Team`}
+          defaultMessage={`Hello ${whatsAppDemoItem.tutor.fullName},\n\nCongratulations! You have successfully cleared the interview stage.\n\nYour demo class has been scheduled.\n\nStudent: {{student_name}}\nSubject: {{subject}}\nDate: {{demo_date}}\nTime: {{demo_time}}\nLocation: {{location}}\n\nPlease be available on time.\n\nThank you,\nCharithra Learning Hub Team`}
           onSuccess={() => {
             setWhatsAppDemoItem(null);
             loadData();
@@ -886,7 +1054,7 @@ export const ParentApprovalPage: React.FC<{ onSelectTutor: (tutor: Tutor) => voi
           isOpen={!!whatsAppApprovalTutor}
           onClose={() => setWhatsAppApprovalTutor(null)}
           recipients={[whatsAppApprovalTutor]}
-          defaultMessage={`Hello ${whatsAppApprovalTutor.fullName},\n\nGreat news! The parent has approved your demo class and selected you for the tuition assignment for {{subject}}.\n\nOur team will reach out to finalize your appointment schedule.\n\nWelcome aboard,\nTutorConnect Tuition Centre.`}
+          defaultMessage={`Hello ${whatsAppApprovalTutor.fullName},\n\nGreat news! The parent has approved your demo class and selected you for the tuition assignment for {{subject}}.\n\nOur team will reach out to finalize your appointment schedule.\n\nWelcome aboard,\nCharithra Learning Hub.`}
           onSuccess={() => {
             setWhatsAppApprovalTutor(null);
             loadData();

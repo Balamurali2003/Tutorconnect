@@ -163,9 +163,12 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({
   const [comm, setComm] = useState(interview?.communicationRating || 4);
   const [subj, setSubj] = useState(interview?.subjectKnowledgeRating || 4);
   const [teach, setTeach] = useState(interview?.teachingAbilityRating || 4);
-  const [result, setResult] = useState<'Selected' | 'Rejected' | 'On Hold'>(
-    (interview?.result as any) || 'Selected'
-  );
+  const [result, setResult] = useState<'SELECTED' | 'FAILED' | 'ON_HOLD'>(() => {
+    const r = (interview?.result || interview?.interviewResult || '').toUpperCase();
+    if (r === 'FAILED' || r === 'REJECTED') return 'FAILED';
+    if (r === 'ON_HOLD' || r === 'ON HOLD') return 'ON_HOLD';
+    return 'SELECTED';
+  });
   const [comments, setComments] = useState(interview?.comments || '');
   const [loading, setLoading] = useState(false);
 
@@ -183,20 +186,21 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({
         teachingAbilityRating: teach,
         overallRating: overall,
         result,
-        comments
+        comments,
+        tutorId: tutor.id
       });
 
-      if (result === 'Selected') {
+      if (result === 'SELECTED') {
         addToast(
           'success',
           'Interview Selected',
-          'Interview selected successfully. Tutor moved to Demo Class.'
+          'Interview result saved as SELECTED. Tutor moved to Demo Class.'
         );
-      } else if (result === 'Rejected') {
+      } else if (result === 'FAILED') {
         addToast(
           'error',
-          'Interview Rejected',
-          `Tutor ${tutor.fullName} was rejected in the interview round.`
+          'Interview Failed',
+          `Tutor ${tutor.fullName} was marked as FAILED in interview.`
         );
       } else {
         addToast(
@@ -283,15 +287,15 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({
 
         {/* Result Selection */}
         <div>
-          <label className="text-xs font-bold text-slate-700 block mb-1">Interview Decision *</label>
+          <label className="text-xs font-bold text-slate-700 block mb-1">Interview Result *</label>
           <select
             value={result}
             onChange={(e) => setResult(e.target.value as any)}
-            className="w-full px-3 py-2 text-sm bg-slate-50 rounded-xl border border-slate-200 font-bold"
+            className="w-full px-3 py-2 text-sm bg-slate-50 rounded-xl border border-slate-200 font-bold focus:outline-none"
           >
-            <option value="Selected">✓ Selected (Move to Demo Class)</option>
-            <option value="On Hold">⏸ On Hold</option>
-            <option value="Rejected">✗ Rejected</option>
+            <option value="SELECTED">SELECTED</option>
+            <option value="FAILED">FAILED</option>
+            <option value="ON_HOLD">ON HOLD</option>
           </select>
         </div>
 
@@ -311,7 +315,7 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl"
+            className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
           >
             Cancel
           </button>
@@ -319,18 +323,20 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({
             type="submit"
             disabled={loading}
             className={`px-5 py-2 text-xs font-bold text-white rounded-xl shadow-sm transition-all ${
-              result === 'Selected'
+              result === 'SELECTED'
                 ? 'bg-emerald-600 hover:bg-emerald-700'
-                : result === 'Rejected'
+                : result === 'FAILED'
                 ? 'bg-rose-600 hover:bg-rose-700'
                 : 'bg-amber-600 hover:bg-amber-700'
             }`}
           >
             {loading
               ? 'Saving...'
-              : result === 'Selected'
-              ? 'MOVE TO DEMO CLASS / SUBMIT'
-              : 'Submit Evaluation'}
+              : result === 'SELECTED'
+              ? 'Move to Demo Class'
+              : result === 'FAILED'
+              ? 'Save Failed Result'
+              : 'Save & Keep on Hold'}
           </button>
         </div>
       </form>

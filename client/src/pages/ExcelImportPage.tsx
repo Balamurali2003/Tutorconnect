@@ -137,9 +137,9 @@ export const ExcelImportPage: React.FC<{ initialTab?: 'teachers' | 'students' | 
     XLSX.utils.book_append_sheet(wb, ws, `${activeTab}_template`);
 
     if (format === 'xlsx') {
-      XLSX.writeFile(wb, `TutorConnect_${activeTab}_template.xlsx`);
+      XLSX.writeFile(wb, `Charithra_Learning_Hub_${activeTab}_template.xlsx`);
     } else {
-      XLSX.writeFile(wb, `TutorConnect_${activeTab}_template.csv`, { bookType: 'csv' });
+      XLSX.writeFile(wb, `Charithra_Learning_Hub_${activeTab}_template.csv`, { bookType: 'csv' });
     }
 
     addToast('success', 'Template Downloaded', `Downloaded ${activeTab} sample spreadsheet.`);

@@ -1,0 +1,257 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FAF8F5;
+  color: #12151E;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Fredoka', 'Poppins', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Glassmorphism */
+.glass-nav {
+  background: rgba(10, 12, 16, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(245, 166, 35, 0.2);
+}
+
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-card-dark {
+  background: rgba(18, 21, 30, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(245, 166, 35, 0.25);
+}
+
+/* Tech grid background */
+.tech-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(245, 166, 35, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 166, 35, 0.05) 1px, transparent 1px);
+}
+
+.tech-dots {
+  background-image: radial-gradient(rgba(245, 166, 35, 0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Custom animated gradients */
+.gradient-gold-text {
+  background: linear-gradient(135deg, #FFE082 0%, #F5A623 50%, #FFB800 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-cyber-text {
+  background: linear-gradient(135deg, #00D2FF 0%, #3B82F6 50%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 3D tilt perspective */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0C10;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #F5A623;
+  border-radius: 5px;
+  border: 2px solid #0A0C10;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FFC83B;
+}
+
+/* Character-First Hero Animation System Keyframes */
+
+/* Gentle organic breathing for mascots */
+@keyframes mascotBreathe {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.008);
+  }
+}
+
+.animate-mascot-breathe {
+  animation: mascotBreathe 4.5s ease-in-out infinite;
+}
+
+.animate-mascot-breathe-delay {
+  animation: mascotBreathe 4.8s ease-in-out infinite 0.8s;
+}
+
+/* Math Symbol Curved Path Entrance & Idle Floating */
+@keyframes mathCurveEnter {
+  0% {
+    opacity: 0;
+    transform: translate(-90px, 40px) scale(0.6) rotate(-20deg);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-20px, -15px) scale(1.05) rotate(10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+.animate-math-enter {
+  animation: mathCurveEnter 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Logic Elements Curved Entrance */
+@keyframes logicCurveEnter {
+  0% {
+    opacity: 0;
+    transform: translate(-100px, -60px) scale(0.5) rotate(-15deg);
+  }
+  60% {
+    opacity: 0.95;
+    transform: translate(-15px, 10px) scale(1.05) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+.animate-logic-enter {
+  animation: logicCurveEnter 2.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Drone Flight Trajectory (High Sky zone, never crossing faces) */
+@keyframes droneFlightPath {
+  0% {
+    opacity: 0;
+    transform: translate(140px, -90px) scale(0.7) rotate(12deg);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(40px, -30px) scale(1.08) rotate(4deg);
+  }
+  60% {
+    transform: translate(10px, -10px) scale(1) rotate(-3deg);
+  }
+  80% {
+    transform: translate(-5px, -15px) scale(1.02) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+.animate-drone-enter {
+  animation: droneFlightPath 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Robotics Elements Entrance (from bottom right) */
+@keyframes roboticsEnter {
+  0% {
+    opacity: 0;
+    transform: translate(90px, 80px) scale(0.6) rotate(35deg);
+  }
+  60% {
+    opacity: 0.95;
+    transform: translate(10px, -10px) scale(1.05) rotate(-5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+.animate-robotics-enter {
+  animation: roboticsEnter 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* RC Car Driving in from bottom edge */
+@keyframes rcCarDriveIn {
+  0% {
+    opacity: 0;
+    transform: translate(180px, 100px) scale(0.85) rotate(-6deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(50px, 20px) scale(1.04) rotate(-2deg);
+  }
+  80% {
+    transform: translate(-10px, -5px) scale(0.98) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+.animate-rc-enter {
+  animation: rcCarDriveIn 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Headlight blinking */
+@keyframes headlightBlink {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.9));
+  }
+  40%, 60% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 2px rgba(0, 210, 255, 0.3));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 16px rgba(0, 210, 255, 1));
+  }
+}
+
+.animate-headlight-blink {
+  animation: headlightBlink 3.5s ease-in-out infinite;
+}
+
+/* Glowing Flowing Constellation Path */
+@keyframes constellationFlow {
+  0% {
+    stroke-dashoffset: 200;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-constellation-flow {
+  stroke-dasharray: 8, 8;
+  animation: constellationFlow 12s linear infinite;
+}
