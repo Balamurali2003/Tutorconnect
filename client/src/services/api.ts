@@ -41,7 +41,7 @@ import {
   AdminDailyUpdatesMetrics
 } from '../types';
 
-const API_BASE = '/api';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE_URL || '/api';
 
 let authToken: string | null = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
 
